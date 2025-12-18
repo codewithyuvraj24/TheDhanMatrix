@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
+    // Helper function to check if document belongs to user
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Helper function to validate investment data
+    function isValidInvestment() {
+      return request.resource.data.depositAmount is number &&
+             request.resource.data.depositAmount > 0 &&
+             request.resource.data.depositAmount <= 10000000 &&
+             request.resource.data.status in ['active', 'pending', 'withdrawn'] &&
+             request.resource.data.userId == request.auth.uid;
+    }
+
+    // ========================
+    // USERS COLLECTION
+    // ========================
+    match /users/{userId} {
+      // Users can only read/write their own documents
+      allow read, write: if isOwner(userId) && request.auth != null;
+      
+      // Validate user data
+      allow create: if request.auth != null &&
+                       request.resource.data.uid == request.auth.uid &&
+                       request.resource.data.email == request.auth.token.email;
+    }
+
+    // ========================
+    // INVESTMENTS COLLECTION
+    // ========================
+    match /investments/{investmentId} {
+      // Users can create investments (only for themselves)
+      allow create: if request.auth != null &&
+                       isValidInvestment();
+      
+      // Users can read their own investments
+      // Admins can read all investments
+      allow read: if request.auth != null &&
+                     (isOwner(resource.data.userId) || isAdmin());
+      
+      // Users can update their own investments
+      // Admins can update any investment
+      allow update: if request.auth != null &&
+                       (isOwner(resource.data.userId) || isAdmin()) &&
+                       isValidInvestment();
+      
+      // Users can delete their own investments
+      // Admins can delete any investment
+      allow delete: if request.auth != null &&
+                       (isOwner(resource.data.userId) || isAdmin());
+    }
+
+    // ========================
+    // ADMINS COLLECTION
+    // ========================
+    match /admins/{adminId} {
+      // Only admins can read admin documents
+      allow read: if request.auth != null && isAdmin();
+      
+      // Only admins can write admin documents (prevent unauthorized promotion)
+      allow write: if request.auth != null && 
+                      isAdmin() &&
+                      request.resource.data.role == 'admin';
+    }
+
+    // ========================
+    // DEFAULT: Deny everything not explicitly allowed
+    // ========================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+  }
+}

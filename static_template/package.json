@@ -1,0 +1,13 @@
+{
+  "name": "static-bootstrap-template",
+  "version": "1.0.0",
+  "description": "Lightweight static Bootstrap v5 template with Sass support and 11 pre-built pages",
+  "private": true,
+  "scripts": {
+    "build-css": "sass scss:css --no-source-map --style=expanded",
+    "watch-css": "sass --watch scss:css --style=expanded"
+  },
+  "devDependencies": {
+    "sass": "^1.79.0"
+  }
+}
