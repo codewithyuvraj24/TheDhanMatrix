@@ -2,8 +2,10 @@
 import ProtectedRoute from '../../components/ProtectedRoute'
 import { useEffect, useState } from 'react'
 import { collection, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore'
-import { db } from '../../lib/firebase'
+import { db, auth } from '../../lib/firebase'
 import { useAuth } from '../../context/AuthContext'
+import { signOut } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   return (
@@ -24,10 +26,20 @@ type Investment = {
 
 function AdminPanel() {
   const { role } = useAuth()
+  const router = useRouter()
   const [investments, setInvestments] = useState<Investment[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
+
+  async function handleLogout() {
+    try {
+      await signOut(auth)
+      router.push('/')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   useEffect(() => {
     if (role !== 'admin') return
@@ -89,9 +101,25 @@ function AdminPanel() {
           {message.text}
         </div>
       )}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-        <p className="text-gray-600 mt-1">Manage all user investments and monitor platform statistics</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
+          <p className="text-gray-600 mt-1">Manage all user investments and monitor platform statistics</p>
+        </div>
+        <div className="flex gap-4">
+          <button
+            onClick={() => router.push('/')}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+          >
+            Main Site
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium shadow-sm"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Statistics Cards */}

@@ -7,7 +7,7 @@ import { db } from '../../../lib/firebase'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
-const SECRET_KEY = 'thedhanmatrix-admin-2025'
+const SECRET_KEY = process.env.NEXT_PUBLIC_ADMIN_SETUP_KEY || 'thedhanmatrix-admin-2025'
 
 export default function AdminSetup() {
     const { user, loading } = useAuth()
