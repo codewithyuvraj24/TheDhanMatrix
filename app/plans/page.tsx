@@ -46,11 +46,11 @@ const plans = [
   }
 ]
 
-export default function Plans(){
+export default function Plans() {
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null)
 
   return (
-    <section>
+    <section className="pt-24 px-4">
       <div className="max-w-6xl mx-auto">
         <FadeIn>
           <h2 className="text-3xl font-bold mb-4">Investment Plans</h2>
@@ -64,29 +64,28 @@ export default function Plans(){
             {plans.map(plan => (
               <StaggerItem key={plan.id}>
                 <motion.div
-                  className={`border rounded-lg p-6 cursor-pointer transition-all ${
-                    selectedPlan === plan.id 
-                      ? 'border-blue-600 bg-blue-50' 
+                  className={`border rounded-lg p-6 cursor-pointer transition-all ${selectedPlan === plan.id
+                      ? 'border-blue-600 bg-blue-50'
                       : 'border-gray-300 bg-white hover:border-blue-400'
-                  }`}
+                    }`}
                   onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
                   whileHover={{ scale: 1.05, y: -5 }}
                   whileTap={{ scale: 0.98 }}
                 >
-              <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-              <div className="mb-4">
-                <p className="text-2xl font-bold text-blue-600">{plan.annualReturn}</p>
-                <p className="text-sm text-gray-600">Annual Return</p>
-              </div>
-              
-              <div className="space-y-2 text-sm mb-4">
-                <p><strong>Min Investment:</strong> ${plan.minInvestment.toLocaleString()}</p>
-                <p><strong>Max Investment:</strong> {plan.maxInvestment ? `$${plan.maxInvestment.toLocaleString()}` : 'Unlimited'}</p>
-                <p><strong>Term:</strong> {plan.term}</p>
-              </div>
-              
-              <p className="text-gray-700 text-sm mb-4">{plan.description}</p>
-              
+                  <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                  <div className="mb-4">
+                    <p className="text-2xl font-bold text-blue-600">{plan.annualReturn}</p>
+                    <p className="text-sm text-gray-600">Annual Return</p>
+                  </div>
+
+                  <div className="space-y-2 text-sm mb-4">
+                    <p><strong>Min Investment:</strong> ${plan.minInvestment.toLocaleString()}</p>
+                    <p><strong>Max Investment:</strong> {plan.maxInvestment ? `$${plan.maxInvestment.toLocaleString()}` : 'Unlimited'}</p>
+                    <p><strong>Term:</strong> {plan.term}</p>
+                  </div>
+
+                  <p className="text-gray-700 text-sm mb-4">{plan.description}</p>
+
                   <motion.button
                     className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                     whileHover={{ scale: 1.02 }}

@@ -8,8 +8,30 @@ import { motion } from 'framer-motion'
 import { FadeIn, StaggerContainer, StaggerItem } from '../../components/Animations'
 import { InvestmentTrendChart, PortfolioBreakdownChart } from '../../components/Charts'
 import { validateInvestmentAmount, validateWithdrawalDate, formatCurrency, getAmountErrorMessage } from '../../lib/validators'
+import { addDoc } from 'firebase/firestore'
+import {
+  TrendingUp,
+  Wallet,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+  Plus,
+  LayoutDashboard,
+  User,
+  ArrowRight
+} from 'lucide-react'
+import { StatsSkeleton, ChartSkeleton, TableSkeleton } from '../../components/Skeleton'
 
-export default function DashboardPage(){
+type Investment = {
+  id: string
+  userId: string
+  depositAmount: number
+  withdrawalDate: string
+  status: 'active' | 'pending' | 'withdrawn'
+  createdAt: string
+}
+
+export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <Dashboard />
@@ -17,58 +39,58 @@ export default function DashboardPage(){
   )
 }
 
-function Dashboard(){
+function Dashboard() {
   const { user } = useAuth()
-  const [investments, setInvestments] = useState<any[]>([])
+  const [investments, setInvestments] = useState<Investment[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [formData, setFormData] = useState({ depositAmount: '', withdrawalDate: '', status: 'active' })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!user) return
-    ;(async ()=>{
-      const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
-      const snap = await getDocs(q)
-      const items = snap.docs.map(d=>({ id: d.id, ...d.data() }))
-      setInvestments(items)
-      setLoading(false)
-    })()
-  },[user])
+      ; (async () => {
+        const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
+        const snap = await getDocs(q)
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment))
+        setInvestments(items)
+        setLoading(false)
+      })()
+  }, [user])
 
-  async function handleCreateInvestment(){
+  async function handleCreateInvestment() {
     setError('')
-    
+
     // Validation checks
     if (!user) {
       setError('You must be logged in to create an investment')
       return
     }
-    
+
     if (!formData.depositAmount) {
       setError('Please enter an investment amount')
       return
     }
-    
+
     if (!validateInvestmentAmount(formData.depositAmount)) {
       setError(getAmountErrorMessage(formData.depositAmount))
       return
     }
-    
+
     if (!formData.withdrawalDate) {
       setError('Please select a withdrawal date')
       return
     }
-    
+
     if (!validateWithdrawalDate(formData.withdrawalDate)) {
       setError('Withdrawal date must be in the future')
       return
     }
-    
+
     setSubmitting(true)
-    try{
-      const { addDoc } = await import('firebase/firestore')
+    setSubmitting(true)
+    try {
       await addDoc(collection(db, 'investments'), {
         userId: user.uid,
         depositAmount: parseFloat(formData.depositAmount),
@@ -79,40 +101,57 @@ function Dashboard(){
       // Refresh investments
       const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
       const snap = await getDocs(q)
-      setInvestments(snap.docs.map(d=>({ id: d.id, ...d.data() })))
+      setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
       setShowModal(false)
       setFormData({ depositAmount: '', withdrawalDate: '', status: 'active' })
       setError('')
-    }catch(err){
+    } catch (err) {
       console.error('Error creating investment:', err)
       setError('Failed to create investment. Please try again.')
-    }finally{
+    } finally {
       setSubmitting(false)
     }
   }
 
   // Calculate portfolio stats
-  const totalInvested = investments.reduce((sum, inv) => sum + (parseFloat(inv.depositAmount) || 0), 0)
+  const totalInvested = investments.reduce((sum, inv) => sum + (Number(inv.depositAmount) || 0), 0)
   const activeInvestments = investments.filter(inv => inv.status === 'active').length
   const withdrawnInvestments = investments.filter(inv => inv.status === 'withdrawn').length
   const averageReturn = 15 // Display value for demo
 
   if (loading) return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-600">Loading your investments...</p>
+    <div className="max-w-6xl mx-auto px-4 pt-24 pb-8">
+      <div className="mb-8">
+        <div className="h-8 w-64 bg-gray-200 animate-pulse rounded mb-2"></div>
+        <div className="h-4 w-48 bg-gray-100 animate-pulse rounded"></div>
       </div>
+      <StatsSkeleton />
+      <ChartSkeleton />
+      <TableSkeleton />
     </div>
   )
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 pt-24 pb-8">
       {/* Header */}
       <FadeIn>
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.email}</h1>
-          <p className="text-gray-600 mt-1">Manage your investment portfolio</p>
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <LayoutDashboard className="text-blue-600" size={32} />
+              Welcome, {user?.displayName || user?.email?.split('@')[0]}
+            </h1>
+            <p className="text-gray-600 mt-1">Manage your investment portfolio and track growth</p>
+          </div>
+          <motion.button
+            onClick={() => setShowModal(true)}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus size={20} />
+            <span>New Investment</span>
+          </motion.button>
         </div>
       </FadeIn>
 
@@ -188,15 +227,10 @@ function Dashboard(){
       <FadeIn delay={0.3}>
         <motion.div className="bg-white rounded-lg shadow p-6" whileHover={{ boxShadow: "0 20px 25px rgba(0,0,0,0.1)" }}>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your Investments</h2>
-            <motion.button
-              onClick={() => setShowModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              + New Investment
-            </motion.button>
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <TrendingUp className="text-blue-600" size={24} />
+              Your Investments
+            </h2>
           </div>
 
           {investments.length === 0 ? (
@@ -206,11 +240,11 @@ function Dashboard(){
               animate={{ opacity: 1, scale: 1 }}
             >
               <motion.div
-                className="text-6xl mb-4"
+                className="text-6xl mb-4 text-gray-300"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                📊
+                <TrendingUp size={64} />
               </motion.div>
               <h3 className="text-xl font-semibold text-gray-900">No investments yet</h3>
               <p className="text-gray-600 mt-2">Start investing to build your wealth</p>
@@ -234,17 +268,15 @@ function Dashboard(){
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <p className="font-semibold text-gray-900">Investment #{inv.id.slice(0, 8)}</p>
-                          <p className="text-sm text-gray-600 mt-1">Deposit: ${parseFloat(inv.depositAmount).toLocaleString()}</p>
+                          <p className="text-sm text-gray-600 mt-1">Deposit: ${Number(inv.depositAmount).toLocaleString()}</p>
                         </div>
                         <motion.span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            inv.status === 'active' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-purple-100 text-purple-800'
-                          }`}
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
+                          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${inv.status === 'active'
+                            ? 'bg-green-100 text-green-700 border border-green-200'
+                            : 'bg-amber-100 text-amber-700 border border-amber-200'
+                            }`}
                         >
+                          {inv.status === 'active' ? <CheckCircle size={12} /> : <Clock size={12} />}
                           {inv.status?.charAt(0).toUpperCase() + inv.status?.slice(1)}
                         </motion.span>
                       </div>
@@ -256,16 +288,17 @@ function Dashboard(){
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Estimated Return:</span>
-                          <span className="font-medium text-green-600">+${(parseFloat(inv.depositAmount) * 0.15).toLocaleString()}</span>
+                          <span className="font-medium text-green-600">+${(Number(inv.depositAmount) * 0.15).toLocaleString()}</span>
                         </div>
                       </div>
 
                       <motion.button
-                        className="w-full mt-4 px-3 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50 transition text-sm font-medium"
+                        className="w-full mt-4 flex items-center justify-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition text-sm font-bold"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        View Details
+                        <span>View Details</span>
+                        <ArrowRight size={16} />
                       </motion.button>
                     </motion.div>
                   </StaggerItem>
@@ -279,8 +312,9 @@ function Dashboard(){
       {/* Disclaimer */}
       <FadeIn delay={0.4}>
         <motion.div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg" whileHover={{ scale: 1.01 }}>
-          <p className="text-sm text-yellow-800">
-            <strong>⚠️ Disclaimer:</strong> Investment returns shown are estimates. Past performance does not guarantee future results. Always consult with a financial advisor before investing.
+          <p className="text-sm text-yellow-800 flex items-center gap-2">
+            <AlertTriangle size={18} className="shrink-0" />
+            <span><strong>Disclaimer:</strong> Investment returns shown are estimates. Past performance does not guarantee future results.</span>
           </p>
         </motion.div>
       </FadeIn>
@@ -317,7 +351,7 @@ function Dashboard(){
                   id="deposit-amount"
                   type="number"
                   value={formData.depositAmount}
-                  onChange={e => setFormData({...formData, depositAmount: e.target.value})}
+                  onChange={e => setFormData({ ...formData, depositAmount: e.target.value })}
                   placeholder="Enter amount"
                   title="Investment amount must be between $1 and $10,000,000"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
@@ -330,7 +364,7 @@ function Dashboard(){
                   id="withdrawal-date"
                   type="date"
                   value={formData.withdrawalDate}
-                  onChange={e => setFormData({...formData, withdrawalDate: e.target.value})}
+                  onChange={e => setFormData({ ...formData, withdrawalDate: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
                 />
               </div>
@@ -340,7 +374,7 @@ function Dashboard(){
                 <select
                   id="status-select"
                   value={formData.status}
-                  onChange={e => setFormData({...formData, status: e.target.value})}
+                  onChange={e => setFormData({ ...formData, status: e.target.value })}
                   title="Select investment status"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
                 >

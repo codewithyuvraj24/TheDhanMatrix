@@ -1,11 +1,11 @@
 "use client"
 import ProtectedRoute from '../../components/ProtectedRoute'
 import { useEffect, useState } from 'react'
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { useAuth } from '../../context/AuthContext'
 
-export default function AdminPage(){
+export default function AdminPage() {
   return (
     <ProtectedRoute adminOnly>
       <AdminPanel />
@@ -13,40 +13,67 @@ export default function AdminPage(){
   )
 }
 
-function AdminPanel(){
+type Investment = {
+  id: string
+  userId: string
+  depositAmount: string | number
+  withdrawalDate: string
+  status: 'active' | 'pending' | 'withdrawn'
+  createdAt: string
+}
+
+function AdminPanel() {
   const { role } = useAuth()
-  const [investments, setInvestments] = useState<any[]>([])
+  const [investments, setInvestments] = useState<Investment[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
 
-  useEffect(()=>{
+  useEffect(() => {
     if (role !== 'admin') return
-    ;(async ()=>{
-      const snap = await getDocs(collection(db, 'investments'))
-      setInvestments(snap.docs.map(d=>({ id: d.id, ...d.data() })))
-      setLoading(false)
-    })()
-  },[role])
+      ; (async () => {
+        const snap = await getDocs(collection(db, 'investments'))
+        setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
+        setLoading(false)
+      })()
+  }, [role])
 
-  async function handleUpdate(id:string, field:string, value:any){
-    try{
+  async function handleUpdate(id: string, field: string, value: any) {
+    try {
       await updateDoc(doc(db, 'investments', id), { [field]: value })
       const snap = await getDocs(collection(db, 'investments'))
-      setInvestments(snap.docs.map(d=>({ id: d.id, ...d.data() })))
+      setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
       setEditingId(null)
-    }catch(err){
+      setMessage({ text: 'Investment updated successfully', type: 'success' })
+      setTimeout(() => setMessage(null), 3000)
+    } catch (err) {
       console.error('Update error:', err)
+      setMessage({ text: 'Failed to update investment', type: 'error' })
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this investment? This action cannot be undone.')) return
+
+    try {
+      await deleteDoc(doc(db, 'investments', id))
+      setInvestments(prev => prev.filter(inv => inv.id !== id))
+      setMessage({ text: 'Investment deleted successfully', type: 'success' })
+      setTimeout(() => setMessage(null), 3000)
+    } catch (err) {
+      console.error('Delete error:', err)
+      setMessage({ text: 'Failed to delete investment', type: 'error' })
     }
   }
 
   // Calculate stats
-  const totalInvested = investments.reduce((sum, inv) => sum + (parseFloat(inv.depositAmount) || 0), 0)
+  const totalInvested = investments.reduce((sum, inv) => sum + (Number(inv.depositAmount) || 0), 0)
   const activeCount = investments.filter(inv => inv.status === 'active').length
   const withdrawnCount = investments.filter(inv => inv.status === 'withdrawn').length
   const uniqueUsers = new Set(investments.map(inv => inv.userId)).size
 
   if (loading) return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 pt-24 pb-8">
       <div className="text-center py-12">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
         <p className="mt-4 text-gray-600">Loading admin data...</p>
@@ -55,8 +82,13 @@ function AdminPanel(){
   )
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 pt-24 pb-8">
       {/* Header */}
+      {message && (
+        <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 text-white ${message.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
+          {message.text}
+        </div>
+      )}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
         <p className="text-gray-600 mt-1">Manage all user investments and monitor platform statistics</p>
@@ -139,19 +171,22 @@ function AdminPanel(){
                       <select
                         defaultValue={inv.status}
                         onChange={e => handleUpdate(inv.id, 'status', e.target.value)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium border-0 cursor-pointer ${
-                          inv.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-purple-100 text-purple-800'
-                        }`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium border-0 cursor-pointer ${inv.status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-purple-100 text-purple-800'
+                          }`}
                       >
                         <option value="active">Active</option>
+                        <option value="pending">Pending</option>
                         <option value="withdrawn">Withdrawn</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4">
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        View →
+                    <td className="px-6 py-4 flex gap-2">
+                      <button
+                        onClick={() => handleDelete(inv.id)}
+                        className="text-red-600 hover:text-red-900 text-sm font-medium"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>

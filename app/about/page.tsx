@@ -1,14 +1,14 @@
-export default function About(){
+export default function About() {
   return (
-    <section className="max-w-4xl mx-auto">
+    <section className="max-w-4xl mx-auto pt-24 px-4">
       <h2 className="text-3xl font-bold mb-6">About TheDhanMatrix</h2>
-      
+
       <div className="space-y-6">
         <div>
           <h3 className="text-xl font-semibold mb-3">Our Mission</h3>
           <p className="text-gray-700">
-            At TheDhanMatrix, we are committed to providing secure, transparent, and innovative investment solutions 
-            to help our clients build and grow their wealth. We believe in making investment opportunities accessible 
+            At TheDhanMatrix, we are committed to providing secure, transparent, and innovative investment solutions
+            to help our clients build and grow their wealth. We believe in making investment opportunities accessible
             to everyone, regardless of their financial background.
           </p>
         </div>
@@ -16,8 +16,8 @@ export default function About(){
         <div>
           <h3 className="text-xl font-semibold mb-3">Who We Are</h3>
           <p className="text-gray-700">
-            TheDhanMatrix is a forward-thinking financial technology platform dedicated to revolutionizing the way 
-            people invest. Our team comprises experienced investment professionals, technologists, and financial experts 
+            TheDhanMatrix is a forward-thinking financial technology platform dedicated to revolutionizing the way
+            people invest. Our team comprises experienced investment professionals, technologists, and financial experts
             who share a common vision: to democratize investment and create lasting value for our clients.
           </p>
         </div>
@@ -25,7 +25,7 @@ export default function About(){
         <div>
           <h3 className="text-xl font-semibold mb-3">What We Do</h3>
           <p className="text-gray-700 mb-4">
-            We offer a comprehensive suite of investment products and services tailored to meet the diverse needs of 
+            We offer a comprehensive suite of investment products and services tailored to meet the diverse needs of
             our clients. From conservative to aggressive investment strategies, we have something for every investor.
           </p>
           <ul className="space-y-2 text-gray-700">

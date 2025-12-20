@@ -12,13 +12,13 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({ user: null, role: null, loading: true })
 
-export function AuthProvider({ children }: { children: React.ReactNode }){
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [role, setRole] = useState<'admin'|'user'|null>(null)
+  const [role, setRole] = useState<'admin' | 'user' | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) =>{
+    const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u)
       if (!u) {
         setRole(null)
@@ -26,17 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }){
         return
       }
       // check admins collection for doc with uid
-      try{
+      try {
         const adminDoc = await getDoc(doc(db, 'admins', u.uid))
         if (adminDoc.exists()) setRole('admin')
         else setRole('user')
-      }catch(e){
+      } catch (error) {
+        console.error('Error checking admin status:', error)
         setRole('user')
       }
       setLoading(false)
     })
     return () => unsub()
-  },[])
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>
@@ -45,6 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }){
   )
 }
 
-export function useAuth(){
+export function useAuth() {
   return useContext(AuthContext)
 }

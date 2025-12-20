@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { FadeIn } from '../../components/Animations'
 
-export default function ProfilePage(){
+export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <ProfileContent />
@@ -16,29 +16,29 @@ export default function ProfilePage(){
   )
 }
 
-function ProfileContent(){
+function ProfileContent() {
   const { user } = useAuth()
   const [displayName, setDisplayName] = useState(user?.displayName || '')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [activeTab, setActiveTab] = useState('profile')
 
-  async function handleUpdateProfile(){
+  async function handleUpdateProfile() {
     if (!user) return
     setLoading(true)
-    try{
+    try {
       await updateProfile(user, { displayName })
       setMessage('✓ Profile updated successfully!')
       setTimeout(() => setMessage(''), 3000)
-    }catch(err){
+    } catch (err) {
       setMessage('Error updating profile')
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 pt-24 pb-8">
       {/* Header */}
       <FadeIn>
         <div className="mb-8">
@@ -51,33 +51,30 @@ function ProfileContent(){
       <div className="flex gap-4 mb-6 border-b border-gray-200">
         <motion.button
           onClick={() => setActiveTab('profile')}
-          className={`px-6 py-3 font-medium border-b-2 transition ${
-            activeTab === 'profile'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+          className={`px-6 py-3 font-medium border-b-2 transition ${activeTab === 'profile'
+            ? 'border-blue-600 text-blue-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
           whileHover={{ scale: 1.05 }}
         >
           Profile Settings
         </motion.button>
         <motion.button
           onClick={() => setActiveTab('security')}
-          className={`px-6 py-3 font-medium border-b-2 transition ${
-            activeTab === 'security'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+          className={`px-6 py-3 font-medium border-b-2 transition ${activeTab === 'security'
+            ? 'border-blue-600 text-blue-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
           whileHover={{ scale: 1.05 }}
         >
           Security
         </motion.button>
         <motion.button
           onClick={() => setActiveTab('activity')}
-          className={`px-6 py-3 font-medium border-b-2 transition ${
-            activeTab === 'activity'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+          className={`px-6 py-3 font-medium border-b-2 transition ${activeTab === 'activity'
+            ? 'border-blue-600 text-blue-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
           whileHover={{ scale: 1.05 }}
         >
           Activity Log
@@ -95,7 +92,7 @@ function ProfileContent(){
           {/* Left Column - Account Info */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Account Information</h2>
-            
+
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
               <input
@@ -139,11 +136,10 @@ function ProfileContent(){
             </div>
 
             {message && (
-              <p className={`text-sm mb-4 p-3 rounded ${
-                message.includes('✓')
-                  ? 'bg-green-50 text-green-800'
-                  : 'bg-red-50 text-red-800'
-              }`}>
+              <p className={`text-sm mb-4 p-3 rounded ${message.includes('✓')
+                ? 'bg-green-50 text-green-800'
+                : 'bg-red-50 text-red-800'
+                }`}>
                 {message}
               </p>
             )}
@@ -195,7 +191,7 @@ function ProfileContent(){
           exit={{ opacity: 0, y: -20 }}
         >
           <h2 className="text-xl font-bold text-gray-900 mb-6">Security Settings</h2>
-          
+
           <div className="space-y-6">
             {[
               { title: 'Change Password', desc: 'Update your password regularly to keep your account secure', label: 'Change Password' },
@@ -234,7 +230,7 @@ function ProfileContent(){
           exit={{ opacity: 0, y: -20 }}
         >
           <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h2>
-          
+
           <div className="space-y-4">
             {[
               { action: 'Login', time: '2 hours ago', ip: '192.168.1.1', device: 'Chrome on Windows' },

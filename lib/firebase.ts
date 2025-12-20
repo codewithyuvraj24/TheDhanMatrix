@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
@@ -17,9 +17,18 @@ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
   console.warn('See .env.local.example for required variables.')
 }
 
-if (!getApps().length) {
-  initializeApp(firebaseConfig)
-}
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 
-export const auth = getAuth()
-export const db = getFirestore()
+export const auth = getAuth(app)
+export const db = getFirestore(app)
+
+// Enable offline persistence
+if (typeof window !== 'undefined') {
+  enableMultiTabIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.')
+    } else if (err.code === 'unimplemented') {
+      console.warn('The current browser does not support all of the features required to enable persistence')
+    }
+  })
+}
