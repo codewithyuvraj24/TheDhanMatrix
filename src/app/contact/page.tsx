@@ -1,5 +1,8 @@
 "use client"
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { FadeIn } from "@/components/ui/Animations"
+import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle, AlertCircle, HelpCircle } from "lucide-react"
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -10,171 +13,207 @@ export default function Contact() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsSubmitting(true)
 
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       setError('All fields are required.')
+      setIsSubmitting(false)
       return
     }
 
-    // Simulate form submission (in real app, send to backend)
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1500))
     console.log('Form submitted:', formData)
     setSubmitted(true)
     setFormData({ name: '', email: '', subject: '', message: '' })
+    setIsSubmitting(false)
 
     // Reset success message after 3 seconds
-    setTimeout(() => setSubmitted(false), 3000)
+    setTimeout(() => setSubmitted(false), 5000)
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pt-24 pb-8">
-      <section className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-2">Contact Us</h2>
-        <p className="text-gray-600 mb-8">Have questions? We'd love to hear from you. Get in touch with us today.</p>
+    <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-[#050505] transition-colors duration-500">
+      <div className="max-w-7xl mx-auto">
+        <FadeIn>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 dark:text-white">Get in Touch</h2>
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Have questions about your investment journey? We're here to help you every step of the way.
+            </p>
+          </div>
+        </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div className="p-6 border border-gray-300 rounded-lg">
-            <h3 className="font-semibold text-lg mb-2">Email</h3>
-            <p className="text-gray-600">
-              <a href="mailto:contact@thedhanmatrix.com" className="text-blue-600 hover:underline">
-                contact@thedhanmatrix.com
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {[
+            {
+              icon: <Mail size={24} className="text-blue-600" />,
+              title: "Email Support",
+              info: "contact@thedhanmatrix.com",
+              sub: "Response within 24 hours",
+              link: "mailto:contact@thedhanmatrix.com"
+            },
+            {
+              icon: <Phone size={24} className="text-emerald-600" />,
+              title: "Phone Support",
+              info: "+91 8857978121",
+              sub: "Mon-Fri, 9am-6pm IST",
+              link: "tel:+918857978121"
+            },
+            {
+              icon: <MapPin size={24} className="text-purple-600" />,
+              title: "Headquarters",
+              info: "Solapur, India",
+              sub: "413007",
+              link: "#"
+            }
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              className="p-8 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl hover:border-blue-500/50 transition-all text-center group"
+            >
+              <div className="w-12 h-12 mx-auto bg-slate-50 dark:bg-black/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                {item.icon}
+              </div>
+              <h3 className="font-bold text-lg mb-2 dark:text-white">{item.title}</h3>
+              <a href={item.link} className="text-blue-600 dark:text-blue-400 font-semibold hover:underline block mb-1">
+                {item.info}
               </a>
-            </p>
-            <p className="text-sm text-gray-500 mt-2">We'll respond within 24 hours</p>
-          </div>
-
-          <div className="p-6 border border-gray-300 rounded-lg">
-            <h3 className="font-semibold text-lg mb-2">Phone</h3>
-            <p className="text-gray-600">
-              <a href="tel:+91 8857978121" className="text-blue-600 hover:underline">
-                +91 8857978121
-              </a>
-            </p>
-            <p className="text-sm text-gray-500 mt-2">Monday to Friday, 9am-6pm EST</p>
-          </div>
-
-          <div className="p-6 border border-gray-300 rounded-lg">
-            <h3 className="font-semibold text-lg mb-2">Address</h3>
-            <p className="text-gray-600">
-              Saiful, Solapur<br />
-              413007<br />
-              India
-            </p>
-          </div>
+              <p className="text-sm text-slate-500 dark:text-slate-500">{item.sub}</p>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Send us a Message</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block font-medium mb-1">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+          <FadeIn delay={0.2}>
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <MessageSquare className="text-blue-600" size={28} />
+                <h3 className="text-2xl font-black dark:text-white">Send us a Message</h3>
               </div>
+              <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-white/5 p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold mb-2 dark:text-slate-300">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold mb-2 dark:text-slate-300">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="john@example.com"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block font-medium mb-1">Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@example.com"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-bold mb-2 dark:text-slate-300">Subject</label>
+                  <select
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none"
+                  >
+                    <option value="">Select a subject...</option>
+                    <option value="Investment Inquiry">Investment Inquiry</option>
+                    <option value="Account Support">Account Support</option>
+                    <option value="Technical Issue">Technical Issue</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block font-medium mb-1">Subject</label>
-                <select
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
+                <div>
+                  <label className="block text-sm font-bold mb-2 dark:text-slate-300">Message</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="How can we help you?"
+                    rows={5}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all resize-none"
+                  />
+                </div>
+
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-sm font-bold">
+                    <AlertCircle size={18} />
+                    {error}
+                  </div>
+                )}
+
+                {submitted && (
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-sm font-bold animate-fadeIn">
+                    <CheckCircle size={18} />
+                    Message sent successfully! We'll be in touch soon.
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
-                  <option value="">Select a subject</option>
-                  <option value="Investment Inquiry">Investment Inquiry</option>
-                  <option value="Account Support">Account Support</option>
-                  <option value="Technical Issue">Technical Issue</option>
-                  <option value="General Inquiry">General Inquiry</option>
-                </select>
+                  {isSubmitting ? (
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : (
+                    <>
+                      Send Message <Send size={18} />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.4}>
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <HelpCircle className="text-purple-600" size={28} />
+                <h3 className="text-2xl font-black dark:text-white">FAQ</h3>
               </div>
-
-              <div>
-                <label className="block font-medium mb-1">Message</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Your message here..."
-                  rows={5}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
-                />
-              </div>
-
-              {error && <p className="text-red-600 font-medium">{error}</p>}
-              {submitted && (
-                <p className="text-green-600 font-medium">✓ Thank you! We'll get back to you soon.</p>
-              )}
-
-              <button
-                type="submit"
-                className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-              >
-                Send Message
-              </button>
-            </form>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Frequently Asked Questions</h3>
-            <div className="space-y-4">
-              <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
-                <h4 className="font-semibold mb-2">How do I get started?</h4>
-                <p className="text-sm text-gray-700">
-                  Simply sign up for an account, complete your profile, and choose an investment plan that suits your goals.
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
-                <h4 className="font-semibold mb-2">What are the minimum investment amounts?</h4>
-                <p className="text-sm text-gray-700">
-                  Minimum investments vary by plan. Our Starter Plan begins at $500, while others require higher minimum amounts.
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
-                <h4 className="font-semibold mb-2">Is my money secure?</h4>
-                <p className="text-sm text-gray-700">
-                  Yes, we employ industry-leading security measures and are fully insured to protect your investments.
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
-                <h4 className="font-semibold mb-2">Can I withdraw my investment early?</h4>
-                <p className="text-sm text-gray-700">
-                  Early withdrawal terms vary by plan. Please contact our support team for details specific to your investment.
-                </p>
+              <div className="space-y-4">
+                {[
+                  { q: "How do I get started?", a: "Simply sign up for an account, complete your profile, and choose an investment plan that suits your goals." },
+                  { q: "What are the minimum investment amounts?", a: "Minimum investments vary by plan. Our Starter Plan begins at $100, while others require higher minimum amounts." },
+                  { q: "Is my money secure?", a: "Yes, we employ industry-leading security measures and are fully insured to protect your investments." },
+                  { q: "Can I withdraw my investment early?", a: "Early withdrawal terms vary by plan. Please contact our support team for details specific to your investment." }
+                ].map((faq, idx) => (
+                  <div key={idx} className="p-6 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl hover:border-blue-500/50 transition-all">
+                    <h4 className="font-bold text-lg mb-2 dark:text-white">{faq.q}</h4>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </FadeIn>
         </div>
-      </section>
+      </div>
     </div>
   )
 }
