@@ -59,16 +59,16 @@ export default function Contact() {
             {
               icon: <Mail size={24} className="text-blue-600" />,
               title: "Email Support",
-              info: "contact@dhanmatrixcapital.com",
+              info: "dhanmatrixcap@gmail.com",
               sub: "Response within 24 hours",
-              link: "mailto:contact@dhanmatrixcapital.com"
+              link: "mailto:dhanmatrixcap@gmail.com"
             },
             {
               icon: <Phone size={24} className="text-emerald-600" />,
               title: "Phone Support",
-              info: "+91 8857978121",
+              info: "+91 8446285154",
               sub: "Mon-Fri, 9am-6pm IST",
-              link: "tel:+918857978121"
+              link: "tel:+918446285154"
             },
             {
               icon: <MapPin size={24} className="text-purple-600" />,
@@ -104,88 +104,9 @@ export default function Contact() {
                 <MessageSquare className="text-blue-600" size={28} />
                 <h3 className="text-2xl font-black dark:text-white">Send us a Message</h3>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-white/5 p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-bold mb-2 dark:text-slate-300">Full Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold mb-2 dark:text-slate-300">Email Address</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="john@example.com"
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-2 dark:text-slate-300">Subject</label>
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none"
-                  >
-                    <option value="">Select a subject...</option>
-                    <option value="Investment Inquiry">Investment Inquiry</option>
-                    <option value="Account Support">Account Support</option>
-                    <option value="Technical Issue">Technical Issue</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-2 dark:text-slate-300">Message</label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="How can we help you?"
-                    rows={5}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all resize-none"
-                  />
-                </div>
-
-                {error && (
-                  <div className="flex items-center gap-2 text-red-600 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-sm font-bold">
-                    <AlertCircle size={18} />
-                    {error}
-                  </div>
-                )}
-
-                {submitted && (
-                  <div className="flex items-center gap-2 text-green-600 bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-sm font-bold animate-fadeIn">
-                    <CheckCircle size={18} />
-                    Message sent successfully! We'll be in touch soon.
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
-                >
-                  {isSubmitting ? (
-                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  ) : (
-                    <>
-                      Send Message <Send size={18} />
-                    </>
-                  )}
-                </button>
-              </form>
+              <div className="bg-white dark:bg-white/5 p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
+                <ContactForm />
+              </div>
             </div>
           </FadeIn>
 
@@ -215,5 +136,112 @@ export default function Contact() {
         </div>
       </div>
     </div>
+  )
+}
+
+import { useForm, ValidationError } from '@formspree/react';
+
+function ContactForm() {
+  const [state, handleSubmit] = useForm("xlgeezwr");
+
+  if (state.succeeded) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 text-center animate-fadeIn">
+        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 text-green-600 dark:text-green-400">
+          <CheckCircle size={32} />
+        </div>
+        <h3 className="text-2xl font-black dark:text-white mb-2">Message Sent!</h3>
+        <p className="text-slate-600 dark:text-slate-400">
+          Thanks for reaching out. We'll get back to you shortly at dhanmatrixcap@gmail.com.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="name" className="block text-sm font-bold mb-2 dark:text-slate-300">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="John Doe"
+            className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+            required
+          />
+          <ValidationError prefix="Name" field="name" errors={state.errors} className="text-red-500 text-sm mt-1" />
+        </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-bold mb-2 dark:text-slate-300">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="john@example.com"
+            className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+            required
+          />
+          <ValidationError prefix="Email" field="email" errors={state.errors} className="text-red-500 text-sm mt-1" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="phone" className="block text-sm font-bold mb-2 dark:text-slate-300">Phone Number</label>
+          <input
+            id="phone"
+            type="tel"
+            name="phone"
+            placeholder="+91 8446285154"
+            className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+            required
+          />
+          <ValidationError prefix="Phone" field="phone" errors={state.errors} className="text-red-500 text-sm mt-1" />
+        </div>
+
+        <div>
+          <label htmlFor="subject" className="block text-sm font-bold mb-2 dark:text-slate-300">Subject</label>
+          <select
+            id="subject"
+            name="subject"
+            className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none"
+          >
+            <option value="Investment Inquiry">Investment Inquiry</option>
+            <option value="Account Support">Account Support</option>
+            <option value="Technical Issue">Technical Issue</option>
+            <option value="General Inquiry">General Inquiry</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="message" className="block text-sm font-bold mb-2 dark:text-slate-300">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="How can we help you?"
+          rows={5}
+          className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all resize-none"
+          required
+        />
+        <ValidationError prefix="Message" field="message" errors={state.errors} className="text-red-500 text-sm mt-1" />
+      </div>
+
+      <button
+        type="submit"
+        disabled={state.submitting}
+        className="w-full px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+      >
+        {state.submitting ? (
+          <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        ) : (
+          <>
+            Send Message <Send size={18} />
+          </>
+        )}
+      </button>
+    </form>
   )
 }

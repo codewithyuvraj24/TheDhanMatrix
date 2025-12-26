@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-              AI-powered investment solutions for the modern Indian retail investor. Smart, secure, and transparent wealth building.
+              Data-driven investment solutions for the modern Indian retail investor. Smart, secure, and transparent wealth building.
             </p>
             <div className="flex gap-4">
               {[
@@ -57,8 +57,6 @@ export default function Footer() {
             <ul className="space-y-4 font-medium text-slate-600 dark:text-slate-400">
               <li><Link href="/contact" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Help Center</Link></li>
               <li><Link href="/contact" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact Support</Link></li>
-              <li><Link href="/privacy" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -71,7 +69,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
-                <span>support@dhanmatrixcapital.com</span>
+                <span>dhanmatrixcap@gmail.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <ShieldCheck size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
@@ -88,14 +86,12 @@ export default function Footer() {
               Market Risk Disclaimer
             </h5>
             <p className="text-xs text-slate-500 dark:text-slate-500 leading-relaxed font-medium capitalize">
-              Investment in the securities market are subject to market risks, read all the related documents carefully before investing. The information provided is for educational and illustrative purposes only and does not constitute investment advice. Past performance is not indicative of future results. The analytics and AI-driven insights provided by Dhanmatrixcapital are tools to assist investors and do not guarantee specific returns.
+              Investment in the securities market are subject to market risks, read all the related documents carefully before investing. The information provided is for educational and illustrative purposes only and does not constitute investment advice. Past performance is not indicative of future results. The analytics and strategic insights provided by Dhanmatrixcapital are tools to assist investors and do not guarantee specific returns.
             </p>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
             <p>&copy; 2025 Dhanmatrixcapital Platform Inc. All rights reserved.</p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</Link>
               <Link href="/cookies" className="hover:text-slate-900 dark:hover:text-white transition-colors">Cookies</Link>
             </div>
           </div>

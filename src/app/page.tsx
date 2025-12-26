@@ -123,7 +123,7 @@ export default function Home() {
               {[
                 {
                   icon: <Cpu className="text-blue-600 dark:text-blue-400" size={32} />,
-                  title: "AI Strategies",
+                  title: "Smart Strategies",
                   desc: "Proprietary algorithms that scan markets 24/7 to find high-yield entries with minimal risk."
                 },
                 {
@@ -222,7 +222,7 @@ export default function Home() {
               { step: "01", title: "Create Account", desc: "Sign up in seconds with Google or Email." },
               { step: "02", title: "Choose a Plan", desc: "Select a strategy that fits your budget." },
               { step: "03", title: "Deposit Funds", desc: "Add capital securely via your dashboard." },
-              { step: "04", title: "Track Growth", desc: "Watch your wealth grow with AI insights." }
+              { step: "04", title: "Track Growth", desc: "Watch your wealth grow with real-time insights." }
             ].map((item, idx) => (
               <FadeIn key={idx} delay={idx * 0.1}>
                 <div className="relative z-10 text-center lg:text-left">
@@ -246,28 +246,20 @@ export default function Home() {
             <p className="text-xl text-slate-600 dark:text-slate-400">Scale your wealth with our adaptive portfolios.</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="flex justify-center max-w-md mx-auto">
             {[
               {
-                name: "Starter",
-                returns: "12-15% p.a.",
-                min: "$100",
-                features: ["Basic AI Insights", "Standard Security", "Monthly Reports"],
-                popular: false
-              },
-              {
                 name: "Growth",
-                returns: "18-22% p.a.",
-                min: "$1,000",
-                features: ["Advanced AI Trading", "Priority Support", "Real-time Tracking", "Risk Management"],
+                returns: "5-15% per month",
+                min: "25k",
+                features: [
+                  "Withdraw Payments Anytime",
+                  "Withdrawals Credit in 24h",
+                  "100% Tax Free Return",
+                  "Real-time Tracking",
+                  "Risk Management"
+                ],
                 popular: true
-              },
-              {
-                name: "Pro",
-                returns: "25%+ p.a.",
-                min: "$10,000",
-                features: ["Elite Algorithms", "Dedicated Advisor", "Custom Strategies", "Tax Optimization"],
-                popular: false
               }
             ].map((plan, idx) => (
               <div key={idx} className={`relative p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border transition-all duration-500 ${plan.popular

@@ -8,47 +8,20 @@ import Link from 'next/link'
 const plans = [
   {
     id: 1,
-    name: 'Starter Plan',
-    minInvestment: 500,
-    maxInvestment: 5000,
-    annualReturn: '12%',
-    term: '12 months',
-    description: 'Perfect for beginners looking to start their investment journey.',
-    features: ['Fixed returns', 'Monthly payouts', 'Low minimum deposit', 'Basic support'],
-    icon: <Shield className="text-blue-500" size={32} />
-  },
-  {
-    id: 2,
-    name: 'Growth Plan',
-    minInvestment: 5000,
-    maxInvestment: 50000,
-    annualReturn: '15%',
-    term: '18 months',
-    description: 'Ideal for investors seeking higher returns with moderate risk.',
-    features: ['Higher returns', 'Quarterly payouts', 'Portfolio diversification', 'Priority support'],
-    icon: <TrendingUp className="text-emerald-500" size={32} />
-  },
-  {
-    id: 3,
-    name: 'Premium Plan',
-    minInvestment: 50000,
-    maxInvestment: 500000,
-    annualReturn: '18%',
-    term: '24 months',
-    description: 'For serious investors looking to maximize long-term growth.',
-    features: ['Maximum returns', 'Annual payouts', 'Personal account manager', '24/7 VIP support'],
-    icon: <Crown className="text-amber-500" size={32} />
-  },
-  {
-    id: 4,
-    name: 'Enterprise Plan',
-    minInvestment: 500000,
-    maxInvestment: null,
-    annualReturn: '20%+',
+    name: 'Growth',
+    minInvestment: '25k',
+    annualReturn: '5-15%',
     term: 'Flexible',
-    description: 'Custom solutions for institutional and high-net-worth investors.',
-    features: ['Custom returns', 'Customized terms', 'Dedicated team', 'Exclusive benefits'],
-    icon: <Zap className="text-purple-500" size={32} />
+    description: 'Consistent returns with flexible withdrawals and tax benefits.',
+    features: [
+      "Withdraw Payments Anytime",
+      "Withdrawals Credit in 24h",
+      "100% Tax Free Return",
+      "Real-time Tracking",
+      "Risk Management",
+      "Priority Support"
+    ],
+    icon: <TrendingUp className="text-blue-500" size={32} />
   }
 ]
 
@@ -64,13 +37,13 @@ export default function Plans() {
               Investment <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Strategies</span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
-              Choose the plan that best suits your goals. All plans are powered by our AI-driven market analysis engine.
+              Choose the plan that best suits your goals.
             </p>
           </div>
         </FadeIn>
 
         <StaggerContainer>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 gap-6 mb-12 max-w-md mx-auto">
             {plans.map(plan => (
               <StaggerItem key={plan.id}>
                 <motion.div
@@ -88,13 +61,13 @@ export default function Plans() {
                   <h3 className="text-xl font-bold mb-2 dark:text-white">{plan.name}</h3>
                   <div className="mb-6">
                     <span className="text-4xl font-black text-slate-900 dark:text-white">{plan.annualReturn}</span>
-                    <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-2">APY</span>
+                    <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 ml-2">Per Month</span>
                   </div>
 
                   <div className="space-y-3 text-sm mb-8">
                     <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-white/5">
                       <span className="text-slate-500 dark:text-slate-400 font-medium">Min Deposit</span>
-                      <span className="font-bold dark:text-white">${plan.minInvestment.toLocaleString()}</span>
+                      <span className="font-bold dark:text-white">{plan.minInvestment}</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-white/5">
                       <span className="text-slate-500 dark:text-slate-400 font-medium">Term</span>
