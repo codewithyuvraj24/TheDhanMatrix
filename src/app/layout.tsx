@@ -13,7 +13,7 @@ const josefin = Josefin_Sans({
 })
 
 export const metadata = {
-  title: 'TheDhanMatrix',
+  title: 'Dhanmatrixcapital',
 }
 
 import { SpeedInsights } from "@vercel/speed-insights/next"

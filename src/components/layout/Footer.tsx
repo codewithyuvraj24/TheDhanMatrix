@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Globe, ShieldCheck, Mail, MapPin } from "lucide-react"
+import Image from "next/image"
+import { Globe, ShieldCheck, Mail, MapPin, Facebook, Instagram, MessageCircle } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -9,18 +10,35 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <Link href="/" className="inline-block">
+            <Link href="/" className="inline-block flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg overflow-hidden shadow-md shadow-amber-500/10">
+                <Image src="/dmc-logo.png" alt="DMC Logo" width={40} height={40} className="object-cover" />
+              </div>
               <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                TheDhanMatrix
+                Dhanmatrixcapital
               </span>
             </Link>
             <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
               AI-powered investment solutions for the modern Indian retail investor. Smart, secure, and transparent wealth building.
             </p>
             <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-white/5 flex items-center justify-center hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors cursor-pointer group">
-                <Globe size={18} className="group-hover:text-white transition-colors" />
-              </div>
+              {[
+                { icon: <Facebook size={18} />, href: "https://www.facebook.com/share/1BmKYbks6S/", color: "hover:bg-blue-600" },
+                { icon: <Instagram size={18} />, href: "https://www.instagram.com/dhanmatrixcapital?igsh=MTNldm91OWw0ZHo3Yw==&utm_source=ig_contact_invite", color: "hover:bg-pink-600" },
+                { icon: <MessageCircle size={18} />, href: "https://wa.me/message/XE45RTHTELRAB1", color: "hover:bg-emerald-500" }
+              ].map((social, idx) => (
+                <a
+                  key={idx}
+                  href={social.href}
+                  className={`w-10 h-10 rounded-xl bg-slate-200 dark:bg-white/5 flex items-center justify-center ${social.color} dark:${social.color} transition-all cursor-pointer group hover:scale-110 shadow-sm`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className="text-slate-600 dark:text-slate-400 group-hover:text-white transition-colors">
+                    {social.icon}
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
 
@@ -49,11 +67,11 @@ export default function Footer() {
             <ul className="space-y-4 font-medium text-slate-600 dark:text-slate-400">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
-                <span>Financial District, Hyderabad, India</span>
+                <span>Solapur, Maharashtra, India</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
-                <span>support@thedhanmatrix.com</span>
+                <span>support@dhanmatrixcapital.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <ShieldCheck size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />
@@ -70,11 +88,11 @@ export default function Footer() {
               Market Risk Disclaimer
             </h5>
             <p className="text-xs text-slate-500 dark:text-slate-500 leading-relaxed font-medium capitalize">
-              Investment in the securities market are subject to market risks, read all the related documents carefully before investing. The information provided is for educational and illustrative purposes only and does not constitute investment advice. Past performance is not indicative of future results. The analytics and AI-driven insights provided by The Dhan Matrix are tools to assist investors and do not guarantee specific returns.
+              Investment in the securities market are subject to market risks, read all the related documents carefully before investing. The information provided is for educational and illustrative purposes only and does not constitute investment advice. Past performance is not indicative of future results. The analytics and AI-driven insights provided by Dhanmatrixcapital are tools to assist investors and do not guarantee specific returns.
             </p>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <p>&copy; 2025 TheDhanMatrix Platform Inc. All rights reserved.</p>
+            <p>&copy; 2025 Dhanmatrixcapital Platform Inc. All rights reserved.</p>
             <div className="flex gap-6">
               <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</Link>

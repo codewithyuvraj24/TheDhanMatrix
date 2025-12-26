@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 import { motion } from "framer-motion"
 import { StaggerContainer, StaggerItem, FadeIn, ScaleIn } from "@/components/ui/Animations"
@@ -31,22 +32,50 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-32 pb-20">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-white/90 dark:bg-[#050505]/90 z-10"></div>
+          <Image
+            src="/hero-bg.png"
+            alt="Background"
+            fill
+            priority
+            className="object-cover"
+            quality={90}
+          />
+        </div>
         <div className="max-w-7xl mx-auto px-4 relative z-10 w-full">
           <div className="text-center max-w-4xl mx-auto">
             <FadeIn>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-bold mb-8">
-                <Cpu size={16} />
-                <span>Next-Gen AI Wealth Management</span>
+                <ShieldCheck size={16} />
+                <span>SEBI Regulated Advisory</span>
               </div>
               <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-6 sm:mb-8 leading-[1.1] tracking-tight text-slate-900 dark:text-white">
-                Smarter Investing. <br className="hidden sm:block" />
+                Smart Investing & <br className="hidden sm:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
-                  Stronger Financial Future.
+                  Structured Growth.
                 </span>
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-400 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-4">
-                Experience AI-driven, transparent wealth growth tailored for the modern Indian investor. Secure your tomorrow with intelligent strategies today.
-              </p>
+
+              <div className="max-w-3xl mx-auto mb-10 space-y-8">
+                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed px-4">
+                  Dhan Matrix Capital provides all advice strictly in accordance with SEBI regulations and is based on client suitability. Join us for the best investment opportunities.
+                </p>
+
+                <div className="mx-auto max-w-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-white/5 dark:to-white/10 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <TrendingUp size={64} className="text-slate-900 dark:text-white" />
+                  </div>
+                  <div className="relative z-10 text-left">
+                    <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
+                      "Investment does not need Lakhs, you can start with just 25k"
+                    </div>
+                    <p className="text-sm sm:text-base font-medium text-slate-500 dark:text-slate-400">
+                      Join us to separate your wealth and unlock opportunities in every market cycle.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </FadeIn>
 
             <FadeIn delay={0.2}>
@@ -85,7 +114,7 @@ export default function Home() {
       <section className="py-24 relative">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black mb-6 text-slate-900 dark:text-white">Why Choose The Dhan Matrix?</h2>
+            <h2 className="text-3xl md:text-5xl font-black mb-6 text-slate-900 dark:text-white">Why Choose Dhanmatrixcapital?</h2>
             <p className="text-xl text-slate-600 dark:text-slate-400">Revolutionizing investing through technology and transparency.</p>
           </div>
 
@@ -123,6 +152,56 @@ export default function Home() {
                   </div>
                 </StaggerItem>
               ))}
+            </div>
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 bg-[#0a192f] text-white relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-600 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">Where DMC invest your Dhan?</h2>
+              <p className="text-xl text-blue-200 font-medium tracking-wide">DMC Working Structure</p>
+            </div>
+          </FadeIn>
+
+          <StaggerContainer>
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              {/* Large Cap - 40% */}
+              <div className="col-span-2 p-10 md:p-14 border border-white/10 rounded-[2rem] bg-gradient-to-b from-blue-600/20 to-blue-900/20 backdrop-blur-md text-center hover:border-blue-500/30 transition-all group shadow-2xl">
+                <div className="text-7xl md:text-9xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 group-hover:scale-105 transition-transform duration-500">40%</div>
+                <div className="text-2xl md:text-3xl font-bold text-blue-100 tracking-wide">Large-Cap</div>
+              </div>
+
+              {/* Mid Cap - 25% & Small Cap - 15% */}
+              <div className="col-span-1 p-8 md:p-10 border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-md text-center hover:bg-white/10 transition-all flex flex-col justify-center items-center min-h-[220px] group">
+                <div className="text-5xl md:text-7xl font-black mb-3 text-white group-hover:scale-105 transition-transform duration-300">25%</div>
+                <div className="text-lg md:text-xl font-bold text-slate-300">Mid-Cap</div>
+              </div>
+
+              <div className="col-span-1 p-8 md:p-10 border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-md text-center hover:bg-white/10 transition-all flex flex-col justify-center items-center min-h-[220px] group">
+                <div className="text-5xl md:text-7xl font-black mb-3 text-white group-hover:scale-105 transition-transform duration-300">15%</div>
+                <div className="text-lg md:text-xl font-bold text-slate-300">Small-Cap</div>
+              </div>
+
+              {/* IPO - 10% & Gold/Silver - 10% */}
+              <div className="col-span-1 p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-md text-center hover:bg-white/10 transition-all flex flex-col justify-center items-center min-h-[180px] group">
+                <div className="text-4xl md:text-6xl font-black mb-2 text-white/90 group-hover:scale-105 transition-transform duration-300">10%</div>
+                <div className="text-base md:text-lg font-bold text-slate-400">IPO</div>
+              </div>
+
+              <div className="col-span-1 p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-md text-center hover:bg-white/10 transition-all flex flex-col justify-center items-center min-h-[180px] group">
+                <div className="text-4xl md:text-6xl font-black mb-2 text-white/90 group-hover:scale-105 transition-transform duration-300">10%</div>
+                <div className="text-base md:text-lg font-bold text-slate-400">Gold/Silver</div>
+              </div>
             </div>
           </StaggerContainer>
         </div>
@@ -246,13 +325,13 @@ export default function Home() {
                   {
                     icon: <Users className="text-blue-600 dark:text-blue-400" size={28} />,
                     label: "Active Investors",
-                    value: "50,000+",
+                    value: "14",
                     color: "bg-blue-600/10"
                   },
                   {
                     icon: <TrendingUp className="text-indigo-600 dark:text-indigo-400" size={28} />,
                     label: "Total Asset Value",
-                    value: "$500M+",
+                    value: "1.3 Million",
                     color: "bg-indigo-600/10"
                   },
                   {
@@ -349,7 +428,7 @@ export default function Home() {
               Compare Plans
             </Link>
           </div>
-          <p className="mt-12 text-blue-200 font-medium italic">"Join 50,000+ smart investors today."</p>
+          <p className="mt-12 text-blue-200 font-medium italic">"Join 14+ smart investors today."</p>
         </div>
       </section>
 

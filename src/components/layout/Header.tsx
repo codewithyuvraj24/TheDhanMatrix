@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 import { useTheme } from "@/context/ThemeContext"
 import { signOut } from "firebase/auth"
@@ -30,11 +31,11 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/70 dark:bg-black/40 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 bg-blue-600 rounded-lg group-hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">
-            <LineChart className="text-white" size={24} />
+          <div className="relative w-10 h-10 rounded-lg overflow-hidden shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300">
+            <Image src="/dmc-logo.png" alt="DMC Logo" fill className="object-cover" sizes="40px" />
           </div>
           <span className="text-xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent tracking-tight">
-            TheDhanMatrix
+            Dhanmatrixcapital
           </span>
         </Link>
         <nav className="flex items-center space-x-1 md:space-x-4">

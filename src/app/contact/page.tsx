@@ -59,9 +59,9 @@ export default function Contact() {
             {
               icon: <Mail size={24} className="text-blue-600" />,
               title: "Email Support",
-              info: "contact@thedhanmatrix.com",
+              info: "contact@dhanmatrixcapital.com",
               sub: "Response within 24 hours",
-              link: "mailto:contact@thedhanmatrix.com"
+              link: "mailto:contact@dhanmatrixcapital.com"
             },
             {
               icon: <Phone size={24} className="text-emerald-600" />,
@@ -73,7 +73,7 @@ export default function Contact() {
             {
               icon: <MapPin size={24} className="text-purple-600" />,
               title: "Headquarters",
-              info: "Solapur, India",
+              info: "Solapur, Maharashtra, India",
               sub: "413007",
               link: "#"
             }

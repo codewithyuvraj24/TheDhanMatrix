@@ -46,18 +46,18 @@ export default function About() {
                 <div>
                   <h3 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white">Who We Are</h3>
                   <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                    TheDhanMatrix is a fintech pioneer founded by a team of veteran traders, data scientists, and security experts. We saw a broken system where only the wealthy had access to the best tools. We built TheDhanMatrix to change that.
+                    Dhanmatrixcapital is a fintech pioneer founded by a team of veteran traders, data scientists, and security experts. We saw a broken system where only the wealthy had access to the best tools. We built Dhanmatrixcapital to change that.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="p-6 bg-white dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm">
                     <Users className="text-purple-600 mb-3" size={32} />
-                    <div className="font-black text-2xl dark:text-white">50k+</div>
+                    <div className="font-black text-2xl dark:text-white">14</div>
                     <div className="text-sm text-slate-500">Active Investors</div>
                   </div>
                   <div className="p-6 bg-white dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm">
                     <Briefcase className="text-emerald-600 mb-3" size={32} />
-                    <div className="font-black text-2xl dark:text-white">$500M+</div>
+                    <div className="font-black text-2xl dark:text-white">1.3 Million</div>
                     <div className="text-sm text-slate-500">Assets Managed</div>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-# 💎 TheDhanMatrix
+# 💎 Dhanmatrixcapital
 
 > A premium wealth management platform built with Next.js 14, Firebase, and cutting-edge UI technologies.
 
@@ -44,8 +44,8 @@
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/TheDhanMatrix.git
-cd TheDhanMatrix
+git clone https://github.com/yourusername/Dhanmatrixcapital.git
+cd Dhanmatrixcapital
 ```
 
 2. **Install dependencies**
@@ -87,7 +87,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## 📁 Project Structure
 
 ```
-TheDhanMatrix/
+Dhanmatrixcapital/
 ├── src/
 │   ├── app/                    # Next.js 14 App Router
 │   │   ├── (auth)/            # Auth pages (login, register)
@@ -216,4 +216,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**Built with 💎 by TheDhanMatrix Team**
+**Built with 💎 by Dhanmatrixcapital Team**
