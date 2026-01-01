@@ -10,6 +10,8 @@ importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compa
 // or we can rely on default if hosted on Firebase Hosting (which auto-configures).
 // Since this is Next.js Vercel, we need explicit config.
 
+// WARNING: Ensure THESE VALUES MATCH your .env.local for local testing
+// In production, these should be injected or fetched.
 const firebaseConfig = {
     apiKey: "REPLACE_WITH_YOUR_KEY",
     authDomain: "dhanmatrix-73894.firebaseapp.com",

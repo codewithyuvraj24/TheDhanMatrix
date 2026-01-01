@@ -2,7 +2,7 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs, getDocsFromCache, getDocsFromServer } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Animations'
@@ -37,11 +37,15 @@ type Investment = {
   createdAt: string
 }
 
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+
 export default function DashboardPage() {
   return (
-    <ProtectedRoute>
-      <Dashboard />
-    </ProtectedRoute>
+    <ErrorBoundary>
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    </ErrorBoundary>
   )
 }
 
@@ -58,11 +62,37 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return
       ; (async () => {
-        const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
-        const snap = await getDocs(q)
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment))
-        setInvestments(items)
-        setLoading(false)
+        try {
+          const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
+
+          // 1. Try cache first for instant load
+          try {
+            const cachedSnap = await getDocsFromCache(q)
+            if (!cachedSnap.empty) {
+              setInvestments(cachedSnap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
+              setLoading(false)
+            }
+          } catch (e) { /* ignore cache miss */ }
+
+          // 2. Race server call with timeout
+          const serverPromise = getDocsFromServer(q)
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Network Timeout')), 15000)
+          )
+
+          const snap = await Promise.race([serverPromise, timeoutPromise]) as any
+          const items = snap.docs.map((d: any) => ({ id: d.id, ...d.data() } as Investment))
+          setInvestments(items)
+        } catch (err: any) {
+          console.error('Dashboard Data Fetch Issue:', err)
+          if (err.message?.includes('failed-precondition') || err.message?.includes('network-error') || err.name === 'FirebaseError') {
+            showToast('Database connection blocked! Please disable AdBlockers/VPN.', 'error')
+          } else if (investments.length === 0) {
+            showToast('Syncing with server taking longer than usual...', 'info')
+          }
+        } finally {
+          setLoading(false)
+        }
       })()
   }, [user])
 
@@ -76,16 +106,24 @@ function Dashboard() {
 
     setSubmitting(true)
     try {
-      await addDoc(collection(db, 'investments'), {
+      const docRef = await addDoc(collection(db, 'investments'), {
         userId: user.uid,
         depositAmount: parseFloat(formData.depositAmount),
         withdrawalDate: formData.withdrawalDate,
         status: formData.status,
         createdAt: new Date().toISOString()
       })
-      const q = query(collection(db, 'investments'), where('userId', '==', user.uid))
-      const snap = await getDocs(q)
-      setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
+
+      const newInvestment: Investment = {
+        id: docRef.id,
+        userId: user.uid,
+        depositAmount: parseFloat(formData.depositAmount),
+        withdrawalDate: formData.withdrawalDate,
+        status: formData.status as any,
+        createdAt: new Date().toISOString()
+      }
+
+      setInvestments(prev => [newInvestment, ...prev])
       setShowModal(false)
       setFormData({ depositAmount: '', withdrawalDate: '', status: 'active' })
       showToast('Investment created successfully!', 'success')
@@ -125,17 +163,8 @@ function Dashboard() {
     showToast('Portfolio exported successfully', 'success')
   }
 
-  if (loading) return (
-    <div className="max-w-7xl mx-auto px-4 pt-32 pb-12">
-      <div className="mb-12">
-        <div className="h-10 w-64 bg-slate-200 dark:bg-white/5 animate-pulse rounded-2xl mb-4"></div>
-        <div className="h-4 w-48 bg-slate-100 dark:bg-white/5 animate-pulse rounded-lg"></div>
-      </div>
-      <StatsSkeleton />
-      <div className="mt-12"><ChartSkeleton /></div>
-      <div className="mt-12"><TableSkeleton /></div>
-    </div>
-  )
+  // No more blocking loading check. The UI will render immediately.
+  // Skeletons are handled by the component internal states or via optimistic rendering.
 
   return (
     <div className="max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 2xl:px-16 pt-24 sm:pt-32 pb-16 sm:pb-20 relative z-10 w-full">
@@ -143,28 +172,36 @@ function Dashboard() {
       <FadeIn>
         <div className="mb-10 sm:mb-12 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-[10px] sm:text-xs">
-              <LayoutDashboard size={14} />
-              <span>Investment Portfolio</span>
+            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-black uppercase tracking-[0.3em] text-[10px] sm:text-xs mb-3">
+              <div className="w-8 h-[2px] bg-blue-600"></div>
+              <span>Protocol Active</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-              Hello, {user?.displayName || user?.email?.split('@')[0] || user?.phoneNumber || 'Operative'}
+            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-2">
+              Dashboard
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium text-sm sm:text-base">Your wealth journey is progressing strategically.</p>
+            <p className="text-slate-500 dark:text-slate-400 font-bold text-sm sm:text-lg">Track and manage your financial activity in one place.</p>
+            <div className="mt-8 flex items-center gap-2">
+              <span className="text-2xl sm:text-3xl">👋</span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-700 dark:text-slate-300">
+                Welcome back, {user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || user?.phoneNumber || 'Operative'}
+              </h2>
+            </div>
           </div>
           <div className="flex gap-3">
             <MagneticButton
               onClick={handleExportCSV}
               className="px-6 py-3 border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-white/10 transition-all flex items-center gap-2"
+              aria-label="Export portfolio data as CSV"
             >
-              <Download size={18} />
+              <Download size={18} aria-hidden="true" />
               <span className="hidden sm:inline">Export</span>
             </MagneticButton>
             <MagneticButton
               onClick={() => setShowModal(true)}
               className="flex items-center justify-center gap-3 px-8 py-4 sm:py-5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition shadow-2xl shadow-blue-500/20 text-sm sm:text-base"
+              aria-label="Schedule a new investment"
             >
-              <Plus size={20} strokeWidth={3} />
+              <Plus size={20} strokeWidth={3} aria-hidden="true" />
               <span>Schedule Investment</span>
             </MagneticButton>
           </div>
@@ -173,31 +210,31 @@ function Dashboard() {
 
       {/* Stats Grid */}
       <StaggerContainer>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[
-            { label: "Total Asset Value", value: formatCurrency(totalInvested), icon: <Wallet size={20} />, sub: `${investments.length} Positions`, color: "blue" },
-            { label: "Active Revenue Pools", value: activeInvestments, icon: <Target size={20} />, sub: "Currently Accruing", color: "emerald" },
-            { label: "Total Realized", value: withdrawnInvestments, icon: <CheckCircle size={20} />, sub: "Secured Profits", color: "indigo" },
-            { label: "Portfolio Yield", value: `${averageReturn}%`, icon: <TrendingUp size={20} />, sub: "Est. Annual Growth", color: "orange" }
+            { label: "Portfolio Value", value: formatCurrency(totalInvested), icon: <Wallet size={20} />, sub: "Current Asset Value", color: "blue" },
+            { label: "Total Invested", value: formatCurrency(totalInvested), icon: <Target size={20} />, sub: "Capital Allocation", color: "emerald" },
+            { label: "Overall Gain / Loss", value: `+${averageReturn}%`, icon: <TrendingUp size={20} />, sub: "Net Portfolio Growth", color: "orange" }
           ].map((stat, idx) => (
             <StaggerItem key={idx}>
-              <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white dark:border-white/10 p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] hover:border-blue-500/30 transition-all group">
-                <div className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 w-fit`}>
+              <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white dark:border-white/10 p-6 sm:p-8 rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                <div className={`absolute top-0 right-0 w-24 h-24 bg-${stat.color}-500/5 blur-2xl rounded-full -mr-12 -mt-12`}></div>
+                <div className={`mb-6 p-4 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 w-fit relative z-10`}>
                   {stat.icon}
                 </div>
-                <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1 sm:mb-2">{stat.label}</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1 sm:mb-2">{stat.value}</h3>
-                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold">{stat.sub}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 relative z-10">{stat.label}</p>
+                <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2 relative z-10">{stat.value}</h3>
+                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold relative z-10">{stat.sub}</p>
               </div>
             </StaggerItem>
           ))}
         </div>
       </StaggerContainer>
 
-      {/* Analytics & Wealth Tools - Lazy Loaded */}
+      {/* Analytics & Wealth Tools */}
       <FadeIn delay={0.2}>
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-12 items-start">
-          <div className="xl:col-span-8 space-y-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-8 mb-12 items-start">
+          <div className="xl:col-span-2 lg:col-span-2 space-y-8">
             <DashboardCharts
               totalInvested={totalInvested}
               activeInvestments={activeInvestments}
@@ -205,10 +242,12 @@ function Dashboard() {
             />
           </div>
 
-          <div className="xl:col-span-4 space-y-8 h-full">
-            <div className="sticky top-32 space-y-8">
-              <AIPredictionWidget totalInvested={totalInvested} />
-              <div className="h-[600px] xl:h-[700px]">
+          <div className="xl:col-span-1 lg:col-span-2 space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-8">
+              <div className="h-full">
+                <AIPredictionWidget totalInvested={totalInvested} />
+              </div>
+              <div className="h-[500px] xl:h-[600px]">
                 <NewsWidget />
               </div>
             </div>
@@ -227,18 +266,24 @@ function Dashboard() {
           </div>
 
           {investments.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
-                <LayoutDashboard size={40} />
+            <div className="text-center py-20 px-4">
+              <div className="max-w-md mx-auto bg-blue-600/5 border border-blue-600/10 rounded-[2.5rem] p-8 sm:p-12 mb-8">
+                <div className="w-20 h-20 bg-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-blue-500/20">
+                  <Plus size={40} strokeWidth={3} />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-4">Start your journey</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-8">
+                  You haven't added any data yet. Add your first investment to see insights and performance.
+                </p>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-3 active:scale-95"
+                >
+                  <span>Add First Investment</span>
+                  <ArrowRight size={20} strokeWidth={3} />
+                </button>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Portfolio Empty</h3>
-              <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Your investment journey starts with a single click.</p>
-              <button
-                onClick={() => setShowModal(true)}
-                className="mt-8 px-8 py-3 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-700 transition"
-              >
-                Launch First Position
-              </button>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secure & Encrypted Infrastructure</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -320,8 +365,9 @@ function Dashboard() {
                 <button
                   onClick={() => setShowModal(false)}
                   className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                  aria-label="Close modal"
                 >
-                  <X size={24} />
+                  <X size={24} aria-hidden="true" />
                 </button>
               </div>
 

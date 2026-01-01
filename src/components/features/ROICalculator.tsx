@@ -126,7 +126,7 @@ export default function ROICalculator() {
                                 fontSize: '12px',
                                 fontWeight: 'bold'
                             }}
-                            formatter={(value: number) => `₹${value.toLocaleString()}`}
+                            formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`}
                         />
                         <Area
                             type="monotone"
@@ -143,15 +143,15 @@ export default function ROICalculator() {
             <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
                     <p className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1">Final Value</p>
-                    <p className="text-xl font-black text-blue-600 dark:text-blue-400">₹{finalValue.toLocaleString()}</p>
+                    <p className="text-xl font-black text-blue-600 dark:text-blue-400">₹{finalValue.toLocaleString('en-IN')}</p>
                 </div>
                 <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
                     <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Total Gains</p>
-                    <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">+₹{totalGains.toLocaleString()}</p>
+                    <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">+₹{totalGains.toLocaleString('en-IN')}</p>
                 </div>
                 <div className="p-4 bg-slate-500/10 border border-slate-500/20 rounded-2xl">
                     <p className="text-xs font-black text-slate-600 dark:text-slate-600 dark:text-slate-300 uppercase tracking-widest mb-1">Invested</p>
-                    <p className="text-xl font-black text-slate-600 dark:text-slate-600 dark:text-slate-300">₹{totalContributions.toLocaleString()}</p>
+                    <p className="text-xl font-black text-slate-600 dark:text-slate-600 dark:text-slate-300">₹{totalContributions.toLocaleString('en-IN')}</p>
                 </div>
             </div>
         </div>

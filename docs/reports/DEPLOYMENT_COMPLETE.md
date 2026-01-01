@@ -19,9 +19,9 @@
 
 ### ✅ Deployment URLs
 
-**Production URL**: https://the-dhan-matrix.vercel.app  
-**Deployment Preview**: https://the-dhan-matrix-3r87ebi4r-thedhanmatrixs-projects.vercel.app  
-**Vercel Dashboard**: https://vercel.com/thedhanmatrixs-projects/the-dhan-matrix
+**Production URL**: https://dhanmatrixcapital.vercel.app  
+**Deployment Preview**: https://dhanmatrixcapital-preview.vercel.app  
+**Vercel Dashboard**: https://vercel.com/thedhanmatrixs-projects/dhanmatrixcapital
 
 ---
 
@@ -159,7 +159,7 @@
 
 ### 1. Test Home Page Animations
 ```
-1. Visit: https://the-dhan-matrix.vercel.app
+1. Visit: https://dhanmatrixcapital.vercel.app
 2. Look for:
    - Floating orbs in hero background
    - Staggered feature cards entrance
@@ -233,7 +233,7 @@
 ## 🎯 Next Steps
 
 ### Immediate
-1. ✅ **Test the live app** at https://the-dhan-matrix.vercel.app
+1. ✅ **Test the live app** at https://dhanmatrixcapital.vercel.app
 2. ✅ **Verify all pages load** correctly
 3. ✅ **Test animations** on different devices
 4. ✅ **Test authentication** with email and Google
@@ -264,7 +264,7 @@
 | **Node Version** | Latest LTS |
 | **Build Time** | ~90 seconds |
 | **Status** | ✅ Live |
-| **URL** | https://the-dhan-matrix.vercel.app |
+| **URL** | https://dhanmatrixcapital.vercel.app |
 | **SSL** | ✅ Enabled |
 | **Domain** | Custom domain configured |
 | **Database** | Firebase Firestore |
@@ -287,8 +287,8 @@ Your TheDhanMatrix investment dashboard is now **live in production** with:
 
 ## 🔗 Important Links
 
-- **Live App**: https://the-dhan-matrix.vercel.app
-- **Firebase Console**: https://console.firebase.google.com/project/thedhanmatrix
+- **Live App**: https://dhanmatrixcapital.vercel.app
+- **Firebase Console**: https://console.firebase.google.com/project/thedhanmatrix (Project ID: thedhanmatrix)
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **GitHub Repo**: (if using Git integration)
 

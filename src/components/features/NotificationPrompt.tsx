@@ -18,9 +18,17 @@ export default function NotificationPrompt() {
 
     const handleEnable = async () => {
         try {
+            const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+            if (!vapidKey) {
+                console.error('Notification Error: NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing in .env.local')
+                showToast('Configuration Error: Missing VAPID Key', 'error')
+                setShowPrompt(false)
+                return
+            }
+
             const messaging = await getMessagingInstance()
             if (!messaging) {
-                showToast('Notifications not supported on this device', 'error')
+                showToast('Notifications not supported on this device/browser', 'error')
                 setShowPrompt(false)
                 return
             }
@@ -30,17 +38,30 @@ export default function NotificationPrompt() {
             if (permission === 'granted') {
                 // Get FCM Token
                 const token = await getToken(messaging, {
-                    vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+                    vapidKey: vapidKey
                 })
-                console.log('FCM Token:', token)
-
-                showToast('Notifications enabled!', 'success')
+                console.log('FCM Token Successfully Retrieved:', token)
+                showToast('Notifications successfully enabled!', 'success')
+            } else if (permission === 'denied') {
+                showToast('Notifications blocked by browser settings', 'info')
             } else {
-                showToast('Notifications blocked', 'info')
+                showToast('Notification permission dismissed', 'info')
             }
-        } catch (error) {
-            console.error('Error enabling notifications:', error)
-            showToast('Failed to enable notifications', 'error')
+        } catch (error: any) {
+            console.error('Core Notification Protocol Error:', error)
+
+            let message = 'Failed to enable notifications'
+            if (error.code === 'messaging/permission-blocked') {
+                message = 'Notifications are blocked in your browser'
+            } else if (error.message?.includes('vapidKey')) {
+                message = 'Invalid VAPID configuration'
+            } else if (error.message?.includes('service worker')) {
+                message = 'Service Worker registration failed'
+            } else {
+                message = `Protocol Error: ${error.message || 'Unknown Error'}`
+            }
+
+            showToast(message, 'error')
         } finally {
             setShowPrompt(false)
         }

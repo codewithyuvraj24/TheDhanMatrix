@@ -77,7 +77,7 @@ vercel
 1. **Add your site to Google Search Console:**
    - Go to [search.google.com/search-console](https://search.google.com/search-console)
    - Click "Add Property"
-   - Enter your Vercel URL: `https://your-project.vercel.app`
+   - Enter your Vercel URL: `https://dhanmatrixcapital.vercel.app`
 
 2. **Verify ownership:**
    - Choose "HTML tag" method
@@ -93,7 +93,7 @@ vercel
 
 3. **Submit your sitemap:**
    - In Search Console → Sitemaps
-   - Add new sitemap: `https://your-project.vercel.app/sitemap.xml`
+   - Add new sitemap: `https://dhanmatrixcapital.vercel.app/sitemap.xml`
    - Click "Submit"
    - Google will start indexing your pages
 
@@ -172,7 +172,7 @@ After deployment, verify everything works:
 ## Troubleshooting
 
 ### PWA not showing install prompt?
-- Check manifest.json is accessible: `https://your-site.com/manifest.json`
+- Check manifest.json is accessible: `https://dhanmatrixcapital.vercel.app/manifest.json`
 - Verify HTTPS is enabled
 - Check browser console for errors
 - Try in incognito mode

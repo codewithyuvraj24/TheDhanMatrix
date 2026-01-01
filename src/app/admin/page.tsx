@@ -1,7 +1,7 @@
 "use client"
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { useEffect, useState } from 'react'
-import { collection, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, updateDoc, deleteDoc, doc, getDocsFromCache, getDocsFromServer } from 'firebase/firestore'
 import { db, auth } from '@/lib/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { signOut } from 'firebase/auth'
@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/Animations'
 import { useToast } from '@/components/ui/PremiumToast'
+import { StatsSkeleton, TableSkeleton } from '@/components/ui/Skeleton'
 import MagneticButton from '@/components/ui/MagneticButton'
 import {
   TrendingUp,
@@ -59,17 +60,40 @@ function AdminPanel() {
   useEffect(() => {
     if (role !== 'admin') return
       ; (async () => {
-        const snap = await getDocs(collection(db, 'investments'))
-        setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
-        setLoading(false)
+        try {
+          const coll = collection(db, 'investments')
+
+          // Cache check
+          try {
+            const cachedSnap = await getDocsFromCache(coll)
+            if (!cachedSnap.empty) {
+              setInvestments(cachedSnap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
+              setLoading(false)
+            }
+          } catch (e) { }
+
+          // Server race
+          const serverPromise = getDocsFromServer(coll)
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Admin Fetch Timeout')), 15000)
+          )
+
+          const snap = await Promise.race([serverPromise, timeoutPromise]) as any
+          setInvestments(snap.docs.map((d: any) => ({ id: d.id, ...d.data() } as Investment)))
+        } catch (err: any) {
+          console.warn('Admin Data Fetch Issue:', err.message)
+        } finally {
+          setLoading(false)
+        }
       })()
   }, [role])
 
   async function handleUpdate(id: string, field: string, value: any) {
     try {
       await updateDoc(doc(db, 'investments', id), { [field]: value })
-      const snap = await getDocs(collection(db, 'investments'))
-      setInvestments(snap.docs.map(d => ({ id: d.id, ...d.data() } as Investment)))
+      setInvestments(prev => prev.map(inv =>
+        inv.id === id ? { ...inv, [field]: value } : inv
+      ))
       setEditingId(null)
       showToast('Investment updated successfully', 'success')
     } catch (err) {
@@ -95,14 +119,36 @@ function AdminPanel() {
   const withdrawnCount = investments.filter(inv => inv.status === 'withdrawn').length
   const uniqueUsers = new Set(investments.map(inv => inv.userId)).size
 
-  if (loading) return (
-    <div className="max-w-7xl mx-auto px-4 pt-32 pb-12">
-      <div className="text-center py-20">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500/20 border-t-blue-500"></div>
-        <p className="mt-6 text-slate-600 dark:text-slate-400 font-medium">Loading admin data...</p>
+  // No more blocking loading check. The shell renders immediately!
+  // Skeletons handle the data pop-in.
+
+  // Diagnostic view for non-admins (though ProtectedRoute should handle this, this is a safety net)
+  if (role !== 'admin') {
+    return (
+      <div className="max-w-3xl mx-auto px-4 pt-32 pb-12 text-center">
+        <div className="p-10 bg-red-500/10 border border-red-500/20 rounded-[3rem] space-y-6">
+          <Shield className="mx-auto text-red-500" size={64} />
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Access Restricted</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+            Your current account does not have **Administrative Clearance**.
+            To activate this command center, follow these strategic steps:
+          </p>
+          <div className="text-left bg-white/50 dark:bg-black/20 p-6 rounded-2xl space-y-4 text-sm font-bold">
+            <p className="text-emerald-600 dark:text-emerald-400">1. Open Firebase Console</p>
+            <p className="text-slate-600 dark:text-slate-300">2. Navigate to Firestore Database -&gt; `users` collection</p>
+            <p className="text-slate-600 dark:text-slate-300">3. Find your UID: <code className="bg-slate-200 dark:bg-white/10 px-2 py-1 rounded">{auth.currentUser?.uid}</code></p>
+            <p className="text-slate-600 dark:text-slate-300">4. Update the `role` field from <code className="text-blue-500">"user"</code> to <code className="text-red-500">"admin"</code></p>
+          </div>
+          <MagneticButton
+            onClick={() => router.push('/')}
+            className="px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs"
+          >
+            Return to Base
+          </MagneticButton>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-24 sm:pt-32 pb-16 sm:pb-20 relative z-10">
@@ -143,8 +189,10 @@ function AdminPanel() {
       {/* Statistics Cards */}
       <StaggerContainer>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {[
-            { label: "Total AUM", value: `₹${totalInvested.toLocaleString()}`, icon: <IndianRupee size={20} />, sub: `${investments.length} positions`, color: "blue" },
+          {loading ? (
+            <div className="col-span-full"><StatsSkeleton /></div>
+          ) : [
+            { label: "Total AUM", value: `₹${totalInvested.toLocaleString('en-IN')}`, icon: <IndianRupee size={20} />, sub: `${investments.length} positions`, color: "blue" },
             { label: "Active Investments", value: activeCount, icon: <Activity size={20} />, sub: "Currently earning", color: "emerald" },
             { label: "Completed", value: withdrawnCount, icon: <TrendingUp size={20} />, sub: "Withdrawn", color: "purple" },
             { label: "Total Users", value: uniqueUsers, icon: <Users size={20} />, sub: "Active investors", color: "orange" }
@@ -174,7 +222,9 @@ function AdminPanel() {
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Click on any field to edit investment details</p>
           </div>
 
-          {investments.length === 0 ? (
+          {loading ? (
+            <TableSkeleton />
+          ) : investments.length === 0 ? (
             <div className="text-center py-20">
               <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
                 <Activity size={40} />

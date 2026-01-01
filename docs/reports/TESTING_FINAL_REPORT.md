@@ -263,7 +263,7 @@
 ✅ Ready for production  
 
 ### Previous Deployment
-- App URL: https://the-dhan-matrix.vercel.app
+- App URL: https://dhanmatrixcapital.vercel.app
 - Domain configured
 - Firebase authorized domains set
 - SSL/HTTPS enabled
@@ -329,7 +329,7 @@ Your TheDhanMatrix application with animations and charts has been thoroughly te
 - **Local Dev**: http://localhost:3000
 - **Firebase Console**: https://console.firebase.google.com
 - **Vercel Dashboard**: https://vercel.com/dashboard
-- **Previous Production**: https://the-dhan-matrix.vercel.app
+- **Previous Production**: https://dhanmatrixcapital.vercel.app
 
 ---
 

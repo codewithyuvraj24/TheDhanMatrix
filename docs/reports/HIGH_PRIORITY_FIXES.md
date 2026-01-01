@@ -174,7 +174,7 @@ vercel deploy --prod
 
 ### To apply Firestore rules:
 1. Open [Firebase Console](https://console.firebase.google.com)
-2. Select your project: **thedhanmatrix**
+2. Select your project: **Dhanmatrixcapital** (ID: thedhanmatrix)
 3. Go to: Firestore Database → Rules
 4. Copy [firestore.rules](firestore.rules) content
 5. Click "Publish"

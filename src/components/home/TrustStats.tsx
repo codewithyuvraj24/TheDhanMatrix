@@ -11,8 +11,8 @@ export default function TrustStats() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                     <div>
                         <h2 className="text-4xl sm:text-6xl font-black mb-10 leading-[1.1] text-slate-900 dark:text-white">
-                            Built on Trust, <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Powered by Success.</span>
+                            Institutional Grade <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Secure Wealth Infrastructure.</span>
                         </h2>
                         <div className="space-y-10">
                             {[

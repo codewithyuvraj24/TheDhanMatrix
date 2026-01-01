@@ -96,7 +96,7 @@ export default function GoalTracker({ currentAmount }: GoalTrackerProps) {
                     <div className="flex justify-between items-center">
                         <span className="text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">Current</span>
                         <span className="text-lg font-black text-slate-900 dark:text-white">
-                            ₹{currentAmount.toLocaleString()}
+                            ₹{currentAmount.toLocaleString('en-IN')}
                         </span>
                     </div>
 
@@ -129,7 +129,7 @@ export default function GoalTracker({ currentAmount }: GoalTrackerProps) {
                         <div className="flex justify-between items-center">
                             <span className="text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">Target</span>
                             <span className="text-lg font-black text-purple-600 dark:text-purple-400">
-                                ₹{goalAmount.toLocaleString()}
+                                ₹{goalAmount.toLocaleString('en-IN')}
                             </span>
                         </div>
                     )}
@@ -138,7 +138,7 @@ export default function GoalTracker({ currentAmount }: GoalTrackerProps) {
                         <div className="flex justify-between items-center">
                             <span className="text-xs font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">Remaining</span>
                             <span className="text-lg font-black text-orange-600 dark:text-orange-400">
-                                ₹{Math.max(0, goalAmount - currentAmount).toLocaleString()}
+                                ₹{Math.max(0, goalAmount - currentAmount).toLocaleString('en-IN')}
                             </span>
                         </div>
                     </div>

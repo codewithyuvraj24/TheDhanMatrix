@@ -1,26 +1,18 @@
-// Google Analytics 4 Integration
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || ''
 
-// Track page views
+// https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = (url: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('config', GA_TRACKING_ID, {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+        ; (window as any).gtag('config', GA_TRACKING_ID, {
             page_path: url,
         })
     }
 }
 
-// Track custom events
-interface GtagEvent {
-    action: string
-    category: string
-    label?: string
-    value?: number
-}
-
-export const event = ({ action, category, label, value }: GtagEvent) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', action, {
+// https://developers.google.com/analytics/devguides/collection/gtagjs/events
+export const event = ({ action, category, label, value }: { action: string, category: string, label: string, value?: number }) => {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+        ; (window as any).gtag('event', action, {
             event_category: category,
             event_label: label,
             value: value,
@@ -28,64 +20,55 @@ export const event = ({ action, category, label, value }: GtagEvent) => {
     }
 }
 
-// Investment-specific events
-export const trackInvestment = (amount: number, plan: string) => {
-    event({
-        action: 'investment_created',
-        category: 'Investment',
-        label: plan,
-        value: amount,
-    })
+export type PredictionRequest = {
+    capital: number
+    months?: number
+    historical_returns?: number[]
 }
 
-export const trackGoalSet = (goalAmount: number) => {
-    event({
-        action: 'goal_set',
-        category: 'Goals',
-        value: goalAmount,
-    })
+export type PredictionResponse = {
+    predicted_value: number
+    annual_yield_percent: number
+    confidence_low: number
+    confidence_high: number
+    message: string
 }
 
-export const trackROICalculation = (investment: number, returns: number) => {
-    event({
-        action: 'roi_calculated',
-        category: 'Tools',
-        label: 'ROI Calculator',
-        value: returns,
-    })
-}
+const AI_CORE_URL = process.env.NEXT_PUBLIC_AI_CORE_URL || 'http://localhost:8000'
 
-export const trackExport = (type: 'csv' | 'pdf') => {
-    event({
-        action: 'data_exported',
-        category: 'Export',
-        label: type.toUpperCase(),
-    })
-}
+export async function getAIPrediction(request: PredictionRequest): Promise<PredictionResponse | null> {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8000) // 8s timeout
 
-export const trackSignup = (method: 'email' | 'google') => {
-    event({
-        action: 'sign_up',
-        category: 'Auth',
-        label: method,
-    })
-}
+    try {
+        const response = await fetch(`${AI_CORE_URL}/predict`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                capital: request.capital,
+                months: request.months || 12,
+                historical_returns: request.historical_returns || [0.12, 0.15, 0.18, 0.14, 0.16]
+            }),
+            signal: controller.signal,
+            next: { revalidate: 3600 }
+        })
 
-export const trackLogin = (method: 'email' | 'google') => {
-    event({
-        action: 'login',
-        category: 'Auth',
-        label: method,
-    })
-}
+        clearTimeout(timeoutId)
 
-// Type definitions for gtag
-declare global {
-    interface Window {
-        gtag: (
-            command: 'config' | 'event',
-            targetId: string,
-            config?: Record<string, any>
-        ) => void
+        if (!response.ok) {
+            throw new Error('AI Core connection failed')
+        }
+
+        return await response.json()
+    } catch (error: any) {
+        clearTimeout(timeoutId)
+        if (error.name === 'AbortError') {
+            console.error('Matrix Prophet AI Core Timeout - Service Unreachable')
+        } else {
+            console.error('Matrix Prophet AI Bridge Error:', error)
+        }
+        return null
     }
 }

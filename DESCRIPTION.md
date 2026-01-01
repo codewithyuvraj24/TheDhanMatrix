@@ -1,0 +1,1 @@
+A high-performance, ultra-wide wealth management ecosystem built with Next.js 14, Firebase, and a multi-language Matrix Core for institutional-grade financial analysis. Features SEBI-regulated advisory, AI-driven predictions, and premium UI/UX optimized for 1600px+ displays.

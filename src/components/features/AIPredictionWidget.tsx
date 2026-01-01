@@ -18,29 +18,38 @@ export default function AIPredictionWidget({ totalInvested }: { totalInvested: n
     const [showInfo, setShowInfo] = useState(false)
 
     useEffect(() => {
-        // Simulate calling the Python FastAPI Backend
         const fetchAIPrediction = async () => {
             setLoading(true)
-            await new Promise(resolve => setTimeout(resolve, 2000)) // Simulation delay
 
-            // Mocking the Python API response
-            const mockResponse: PredictionData = {
-                predicted_value: totalInvested * 1.15, // 15% predicted growth
-                annual_yield_percent: 15.42,
-                confidence_low: totalInvested * 1.12,
-                confidence_high: totalInvested * 1.19,
-                message: "Matrix Prophet Protocol Optimized"
+            try {
+                // Import the server action dynamically to avoid bundle issues if not used
+                const { getAIPrediction } = await import('@/lib/analytics')
+                const realPrediction = await getAIPrediction({ capital: totalInvested })
+
+                if (realPrediction) {
+                    setPrediction(realPrediction)
+                } else {
+                    // Intelligent fallback logic if API is unreachable
+                    setPrediction({
+                        predicted_value: totalInvested * 1.15,
+                        annual_yield_percent: 15.00,
+                        confidence_low: totalInvested * 1.10,
+                        confidence_high: totalInvested * 1.25,
+                        message: "Matrix Core Offline - Using Estimated Projections"
+                    })
+                }
+            } catch (err) {
+                console.error("AI Prediction Error:", err)
+            } finally {
+                setLoading(false)
             }
-
-            setPrediction(mockResponse)
-            setLoading(false)
         }
 
         if (totalInvested > 0) fetchAIPrediction()
         else setLoading(false)
     }, [totalInvested])
 
-    if (totalInvested === 0) return null
+    // Removed: if (totalInvested === 0) return null
 
     return (
         <div className="bg-gradient-to-br from-indigo-600/10 to-blue-600/10 dark:from-indigo-600/20 dark:to-blue-600/20 backdrop-blur-xl border border-blue-500/20 rounded-[2rem] p-6 h-full relative overflow-hidden group">

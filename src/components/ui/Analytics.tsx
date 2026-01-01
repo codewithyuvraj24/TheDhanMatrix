@@ -17,19 +17,13 @@ export default function Analytics() {
     }, [pathname, searchParams])
 
     // Load analytics if GA_TRACKING_ID is set
-    if (!GA_TRACKING_ID) {
-        console.log('Analytics: GA_TRACKING_ID not found')
-        return null
-    }
-
-    console.log('Analytics: Loading with ID:', GA_TRACKING_ID)
+    if (!GA_TRACKING_ID) return null
 
     return (
         <>
             <Script
                 strategy="afterInteractive"
                 src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-                onLoad={() => console.log('Analytics: gtag.js loaded')}
             />
             <Script
                 id="google-analytics"
@@ -43,7 +37,6 @@ export default function Analytics() {
               page_path: window.location.pathname,
               send_page_view: false
             });
-            console.log('Analytics: gtag configured');
           `,
                 }}
             />

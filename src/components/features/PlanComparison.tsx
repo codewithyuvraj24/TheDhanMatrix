@@ -121,7 +121,7 @@ export default function PlanComparison() {
                                 <td className="p-4 font-bold text-slate-500 dark:text-slate-400">Min Investment</td>
                                 {activePlans.map(plan => (
                                     <td key={plan.id} className="p-4 text-center font-black text-slate-900 dark:text-white">
-                                        ₹{plan.min.toLocaleString()}
+                                        ₹{plan.min.toLocaleString('en-IN')}
                                     </td>
                                 ))}
                             </tr>

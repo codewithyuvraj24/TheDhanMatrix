@@ -64,17 +64,24 @@ export default function PhoneAuth() {
             setConfirmationResult(result)
             setTimer(60)
         } catch (err: any) {
-            console.error(err)
+            console.error("Phone Auth Error:", err)
             let customError = 'Failed to send OTP. Please try again.'
-            if (err.message === 'Please enter a valid 10-digit mobile number') {
-                customError = err.message
-            } else if (err.code === 'auth/billing-not-enabled') {
-                customError = 'Phone auth requires a billing account (Blaze plan) in Firebase.'
+
+            // Deployment-specific diagnostics
+            if (err.message?.includes('auth/invalid-app-credential')) {
+                customError = 'reCAPTCHA verification failed. Ensure your domain is authorized in Firebase Console -> Auth -> Settings -> Authorized Domains.'
+            } else if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing')) {
+                customError = 'Phone Auth requires the Firebase Blaze (Pay-as-you-go) plan. Check your Firebase Project settings.'
+            } else if (err.code === 'auth/captcha-check-failed') {
+                customError = 'reCAPTCHA check failed. This often happens if the domain is not authorized.'
             } else if (err.code === 'auth/too-many-requests') {
-                customError = 'Too many attempts. Please try again later.'
+                customError = 'Security Alert: Too many requests. Please wait before trying again.'
+            } else if (err.message === 'Please enter a valid 10-digit mobile number') {
+                customError = err.message
             } else if (err.code) {
-                customError = `Error: ${err.code.split('/')[1].replace(/-/g, ' ')}`
+                customError = `Protocol Error: ${err.code.split('/')[1].replace(/-/g, ' ')}`
             }
+
             setError(customError)
             if (window.recaptchaVerifier) {
                 window.recaptchaVerifier.clear()

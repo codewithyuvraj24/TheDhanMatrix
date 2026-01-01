@@ -26,6 +26,11 @@ export const metadata = {
   authors: [{ name: 'Dhanmatrixcapital Team' }],
   creator: 'Dhanmatrixcapital',
   publisher: 'Dhanmatrixcapital',
+  icons: {
+    icon: '/icon-192.png',
+    shortcut: '/icon-192.png',
+    apple: '/icon-192.png',
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -80,7 +85,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={josefin.variable}>
+    <html lang="en" className={josefin.variable} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
         <meta name="theme-color" content="#3B82F6" />
@@ -88,7 +93,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={`${josefin.className} min-h-screen relative overflow-x-hidden transition-colors duration-500`}>
+      <body
+        className={`${josefin.className} min-h-screen relative overflow-x-hidden transition-colors duration-500`}
+        suppressHydrationWarning
+      >
         <ThemeProvider>
           <AuthProvider>
             <ToastProvider>

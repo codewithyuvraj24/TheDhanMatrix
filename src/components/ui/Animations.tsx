@@ -53,7 +53,7 @@ export function PageTransition({ children, className = "" }: AnimationProps) {
       exit="exit"
       variants={pageVariants}
       className={className}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -75,7 +75,7 @@ export function StaggerContainer({ children, className = "" }: AnimationProps) {
 
 export function StaggerItem({ children, className = "" }: AnimationProps) {
   return (
-    <motion.div variants={itemVariants} className={className} transition={{ duration: 0.5 }}>
+    <motion.div variants={itemVariants} className={className} transition={{ duration: 0.3 }}>
       {children}
     </motion.div>
   )
@@ -87,7 +87,7 @@ export function FadeIn({ children, delay = 0, className = "" }: AnimationProps) 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={className}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.3, delay }}
     >
       {children}
     </motion.div>
@@ -120,7 +120,7 @@ export function ScaleIn({ children, className = "" }: AnimationProps) {
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       className={className}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       {children}
     </motion.div>

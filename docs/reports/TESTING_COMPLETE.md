@@ -157,7 +157,7 @@ Errors:            ✓ None
 ```bash
 # Via GitHub push (if using Git)
 # Or connect GitHub repo to Vercel dashboard
-# Previous app: https://the-dhan-matrix.vercel.app
+# Previous app: https://dhanmatrixcapital.vercel.app
 ```
 
 **Option 2: Manual Vercel Deploy**
