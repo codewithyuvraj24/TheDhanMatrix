@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-josefin)', 'Josefin Sans', 'sans-serif'],
+        sans: ['var(--font-outfit)', 'Outfit', 'sans-serif'],
       },
       colors: {
         brand: {

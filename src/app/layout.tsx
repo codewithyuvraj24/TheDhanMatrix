@@ -4,16 +4,16 @@ import Footer from '@/components/layout/Footer'
 import { AuthProvider } from '@/context/AuthContext'
 import { ThemeProvider } from '@/context/ThemeContext'
 import BackgroundOrbs from '@/components/layout/BackgroundOrbs'
-import { Josefin_Sans } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ToastProvider } from '@/components/ui/PremiumToast'
 import Analytics from '@/components/ui/Analytics'
 import { Suspense } from 'react'
+import { Outfit } from 'next/font/google'
 
-const josefin = Josefin_Sans({
+const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-josefin',
+  variable: '--font-outfit',
 })
 
 export const metadata = {
@@ -85,7 +85,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={josefin.variable} suppressHydrationWarning>
+    <html lang="en" className={outfit.variable} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
         <meta name="theme-color" content="#3B82F6" />
@@ -94,7 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body
-        className={`${josefin.className} min-h-screen relative overflow-x-hidden transition-colors duration-500`}
+        className={`${outfit.className} min-h-screen relative overflow-x-hidden transition-colors duration-500`}
         suppressHydrationWarning
       >
         <ThemeProvider>

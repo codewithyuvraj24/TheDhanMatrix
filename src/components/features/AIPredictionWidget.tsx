@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, TrendingUp, ShieldCheck, BrainCircuit, Info, AlertCircle } from 'lucide-react'
 import { formatCurrency } from '@/lib/validators'
+import MagneticButton from '@/components/ui/MagneticButton'
 
 type PredictionData = {
     predicted_value: number
@@ -159,12 +160,12 @@ export default function AIPredictionWidget({ totalInvested }: { totalInvested: n
                                     <span>Generates 95% confidence intervals for your ROI.</span>
                                 </li>
                             </ul>
-                            <button
+                            <MagneticButton
                                 onClick={() => setShowInfo(false)}
-                                className="mt-8 py-3 bg-white text-slate-900 rounded-xl font-black uppercase tracking-widest text-xs"
+                                className="mt-8 py-3 bg-white text-slate-900 rounded-xl font-black uppercase tracking-widest text-xs w-full"
                             >
                                 Got it
-                            </button>
+                            </MagneticButton>
                         </motion.div>
                     )}
                 </AnimatePresence>

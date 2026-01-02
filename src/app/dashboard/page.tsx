@@ -173,7 +173,15 @@ function Dashboard() {
         <div className="mb-10 sm:mb-12 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-black uppercase tracking-[0.3em] text-[10px] sm:text-xs mb-3">
-              <div className="w-8 h-[2px] bg-blue-600"></div>
+              <div className="relative w-8 h-[2px]">
+                <div className="absolute inset-0 bg-blue-600"></div>
+                <motion.div
+                  initial={{ opacity: 0.5, scaleX: 0.8 }}
+                  animate={{ opacity: 1, scaleX: 1.2 }}
+                  transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                  className="absolute inset-0 bg-blue-400 blur-sm"
+                ></motion.div>
+              </div>
               <span>Protocol Active</span>
             </div>
             <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-2">
@@ -275,13 +283,13 @@ function Dashboard() {
                 <p className="text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-8">
                   You haven't added any data yet. Add your first investment to see insights and performance.
                 </p>
-                <button
+                <MagneticButton
                   onClick={() => setShowModal(true)}
                   className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-3 active:scale-95"
                 >
                   <span>Add First Investment</span>
                   <ArrowRight size={20} strokeWidth={3} />
-                </button>
+                </MagneticButton>
               </div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secure & Encrypted Infrastructure</p>
             </div>
@@ -414,24 +422,25 @@ function Dashboard() {
               </div>
 
               <div className="mt-12 flex gap-4">
-                <button
+                <MagneticButton
                   onClick={() => setShowModal(false)}
                   className="flex-1 py-5 rounded-2xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 font-black hover:bg-slate-50 dark:hover:bg-white/5 transition-all active:scale-95"
                 >
                   ABORT
-                </button>
-                <button
+                </MagneticButton>
+                <MagneticButton
                   onClick={handleCreateInvestment}
                   disabled={submitting}
                   className="flex-1 py-5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition disabled:opacity-50 active:scale-95 shadow-2xl shadow-blue-500/20"
                 >
                   {submitting ? 'EXECUTING...' : 'CONFIRM POSITION'}
-                </button>
+                </MagneticButton>
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-    </div>
+        )
+        }
+      </AnimatePresence >
+    </div >
   )
 }
