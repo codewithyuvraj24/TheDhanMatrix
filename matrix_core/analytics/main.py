@@ -2,9 +2,19 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 import numpy as np
-from .roi_forecaster import ROIPredictor
+from roi_forecaster import ROIPredictor
+
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Dhanmatrix Matrix Prophet API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class PredictionRequest(BaseModel):
     capital: float

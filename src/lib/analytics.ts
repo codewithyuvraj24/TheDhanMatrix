@@ -34,7 +34,9 @@ export type PredictionResponse = {
     message: string
 }
 
-const AI_CORE_URL = process.env.NEXT_PUBLIC_AI_CORE_URL || 'http://localhost:8000'
+const isProd = process.env.NODE_ENV === 'production'
+// On Vercel, we use the relative path mapped in vercel.json. Locally, we use port 8000.
+const AI_CORE_URL = process.env.NEXT_PUBLIC_AI_CORE_URL || (isProd ? '/py-api' : 'http://localhost:8000')
 
 export async function getAIPrediction(request: PredictionRequest): Promise<PredictionResponse | null> {
     const controller = new AbortController()

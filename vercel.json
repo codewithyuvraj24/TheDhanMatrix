@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/py-api/:path*",
+            "destination": "/matrix_core/analytics/main.py"
+        }
+    ]
+}
